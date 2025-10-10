@@ -289,8 +289,8 @@ void setup() {
         request->send(200, "text/json", "Mauvaise commande" );
       }
     } else {
-      servoD.write(0);
-      servoG.write(0);
+      servoD.write(180);
+      servoG.write(180);
       request->send(200, "text/json", "Gauche");
     }
   });
@@ -299,8 +299,8 @@ void setup() {
     servoG.attach(pin_servoG);
     servoD.attach(pin_servoD);
 
-    servoD.write(0);
-    servoG.write(0);
+    servoD.write(180);
+    servoG.write(180);
     stopper.attach(0.2, arret);
     request->send(200, "text/json", "Gauche");
 
@@ -311,8 +311,8 @@ void setup() {
     servoG.attach(pin_servoG);
     servoD.attach(pin_servoD);
 
-    servoD.write(180);
-    servoG.write(180);
+    servoD.write(0);
+    servoG.write(0);
 
     stopper.attach(0.2, arret);
     request->send(200, "text/json", "Droite");
@@ -333,8 +333,8 @@ void setup() {
         request->send(200, "text/json", "Mauvaise commande" );
       }
     } else {
-      servoD.write(180);
-      servoG.write(180);
+      servoD.write(0);
+      servoG.write(0);
       request->send(200, "text/json", "Droite");
     }
   });

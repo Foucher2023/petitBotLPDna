@@ -1,0 +1,12 @@
+Comment faire pour utiliser les fichiers binaires et flash (utiliser)
+directement le esp8266 de la manière la plus facile possible
+
+aller sur : https://espressif.github.io/esptool-js/ via Chrome 
+
+Program -> Baudrate 115200 -> connect -> selectionner le port de connection vers l'esp8266 (exemple : )
+
+0x0000 -> petitbot_v4.ino.bin
+
+0x100000 -> petitbot_v4.spiffs.bin
+
+clic sur "Program"
