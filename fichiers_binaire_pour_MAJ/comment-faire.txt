@@ -10,6 +10,7 @@ Program -> Baudrate 115200 -> connect -> selectionner le port de connection vers
 
 0x100000 -> petitbot_v4.spiffs.bin
 
+clic sur "Program"
 ----- pour le new code -----
 
 pour esp8266 :
