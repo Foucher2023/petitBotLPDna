@@ -162,3 +162,4 @@ vous pouvez soit téléchager le fichier en .ino pour pouvoir l'ouvrir avec IDE 
 <h3>chapitre 7 Les autres version du petitbot : </h3>
 
 <h3>liste de liens pour l'achat </h3>
+ [links_purchase](./note_de_frais(theorique)_pour_les_petitsbots_stabilise.txt)
