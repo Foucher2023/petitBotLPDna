@@ -5,8 +5,24 @@ aller sur : https://espressif.github.io/esptool-js/ via Chrome
 
 Program -> Baudrate 115200 -> connect -> selectionner le port de connection vers l'esp8266 (exemple : )
 
+----- pour le old-code-esp8266 -----
 0x0000 -> petitbot_v4.ino.bin
 
 0x100000 -> petitbot_v4.spiffs.bin
+
+----- pour le new code -----
+
+pour esp8266 :
+0x0000 -> petitbot-V6-bin.ino
+
+pour esp32-C3 : 
+
+en un seul fichier 
+0x0000 -> petitbot-V6-esp32.ino.merged.bin
+
+en trois fichier 
+petitbot-V6-esp32.ino.bootloader.bin → Adresse : 0x0
+petitbot-V6-esp32.ino.partitions.bin → Adresse : 0x8000
+petitbot-V6-esp32.ino.bin → Adresse : 0x10000
 
 clic sur "Program"
