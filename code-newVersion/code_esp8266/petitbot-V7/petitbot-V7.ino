@@ -8,8 +8,11 @@
 static constexpr uint8_t LED_PIN = 2;          // Broche de la LED intégrée (NodeMCU)
 // 8 pour esp32
 static constexpr uint8_t DNS_PORT = 53;       // Port DNS
+static constexpr uint8_t SERVER_PORT = 80;       // Port SERVER
 static constexpr uint16_t EEPROM_SIZE = 256; // Taille de l'EEPROM
-static constexpr const char* DEFAULT_SSID = "Petitbot bois";
+static constexpr uint8_t BUFFER_SIZE = 64;
+static constexpr const char* DEFAULT_SSID = "Petitbot test";
+static constexpr uint8_t DEFAULT_VALUE_F_MEM = 255;
 static constexpr uint8_t PIN_MOTOR1 = 4;          // Broche moteur
 static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 // 0 et 3 pour esp32
@@ -35,6 +38,7 @@ static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 #include "Style_des_pages/telecommande_style.h"
 #include "Style_des_pages/programmer_style.h"
 #include "Style_des_pages/connectionLimit_style.h"
+#include "Style_des_pages/ota_style.h"
 
 // Pages HTML
 #include "Page_HTML/telecommande.h"
@@ -62,7 +66,7 @@ struct DeviceConfig {
 };
 
 DeviceConfig config;
-ESP8266WebServer server(80);
+ESP8266WebServer server(SERVER_PORT);
 DNSServer dnsServer;
 Servo servoG;
 Servo servoD;
@@ -102,7 +106,7 @@ void clearEEPROM() {
   Serial.println("Clearing EEPROM...");
   EEPROM.begin(EEPROM_SIZE);
   for (uint16_t i = 0; i < EEPROM_SIZE; i++) {
-    EEPROM.write(i, 255);
+    EEPROM.write(i, DEFAULT_VALUE_F_MEM);
   }
   EEPROM.commit();
   Serial.println("EEPROM cleared!");
@@ -123,7 +127,7 @@ void loadConfig() {
   config.password[sizeof(config.password) - 1] = '\0';
 
   if (strlen(config.ssid) == 0 || strlen(config.ssid) >= sizeof(config.ssid) ||
-      config.pinMotor1 == 255 || config.pinMotor2 == 255) {
+      config.pinMotor1 == DEFAULT_VALUE_F_MEM || config.pinMotor2 == DEFAULT_VALUE_F_MEM) {
     setDefaultConfig();
     saveConfig();
   }
@@ -167,7 +171,7 @@ void setWifi() {
 
 // =================== Handlers HTTP =======================
 void handleGetValueEEPROM() {
-char buffer[64];
+char buffer[BUFFER_SIZE];
 snprintf(buffer, sizeof(buffer), "%d,%d,%d,%d,%d,%s",
          config.ledState, config.motorsFBInverted, config.motorsLRInverted,
          config.pinMotor1, config.pinMotor2, config.ssid);
@@ -343,6 +347,7 @@ void setupRoutes() {
   server.on("/telecommande.css", []() { server.send_P(200, "text/css", TELECOMMANDE_CSS); });
   server.on("/programmer.css", []() { server.send_P(200, "text/css", PROGRAMMER_CSS); });
   server.on("/connectionLimit.css", []() { server.send_P(200, "text/css", CONNECT_LIMIT_CSS); });
+  server.on("/ota.css", []() { server.send_P(200, "text/css", OTA_CSS); });
 
   // Fichiers statiques JS
   server.on("/config.js", []() { server.send_P(200, "text/javascript", CONFIG_JS); });
