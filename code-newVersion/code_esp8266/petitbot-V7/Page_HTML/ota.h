@@ -10,68 +10,7 @@ const char OTA_PAGE[] PROGMEM = R"rawliteral(
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/global.css">
   <link rel="stylesheet" href="/navbar.css">
-  <style>
-    .ota-container {
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 20px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .ota-form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    .ota-input {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-    .ota-button {
-      background: #4CAF50;
-      color: white;
-      padding: 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .ota-button:hover {
-      background: #45a049;
-    }
-    .ota-progress {
-      margin-top: 20px;
-      height: 20px;
-      background: #f0f0f0;
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    .ota-progress-bar {
-      height: 100%;
-      background: #4CAF50;
-      width: 0%;
-      transition: width 0.3s;
-    }
-    .ota-status {
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 5px;
-      display: none;
-    }
-    .success { background: #dff0d8; color: #3c763d; }
-    .error { background: #f2dede; color: #a94442; }
-    .message-important {
-      background: #ffcccc;
-      color: #cc0000;
-      padding: 8px;
-      border-radius: 4px;
-      margin: 10px 0;
-      font-weight: bold;
-      text-align: center;
-    }
-  </style>
+  <link rel="stylesheet" href="/ota.css">
 </head>
 <body>
   <nav class="navbar navbar-inverse">
@@ -97,7 +36,9 @@ const char OTA_PAGE[] PROGMEM = R"rawliteral(
 
   <div class="ota-container">
     <h1 class="infoInBlack">Mise à jour via OTA</h1>
-    <div class="message-important">Pour bien utiliser cette fonctionnalitée vous devez être connecter sur un navigateur avec l'url "192.168.4.1/ota" </div>
+    
+    <div class="message-important" id="message-ota-important">Pour bien utiliser cette fonctionnalitée vous devez être connecter sur un navigateur avec l'url "192.168.4.1/ota" </div>
+   
     <p class="infoInBlack">Sélectionnez un fichier .bin pour mettre à jour le PetitBot.</p>
   
     <form class="ota-form" id="otaForm">

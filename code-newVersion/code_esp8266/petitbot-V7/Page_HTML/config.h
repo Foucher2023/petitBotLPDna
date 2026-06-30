@@ -127,7 +127,7 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
 
     <!-- SSID -->
     <section class="config-section">
-      <h2>Nom du réseau (SSID)</h2>
+      <h2>Nouveau nom du réseau (SSID)</h2>
       <div class="ssid-input">
         <input type="text" id="ssidInput" placeholder="Nouveau nom" maxlength="30" aria-label="Nom du réseau">
         <button class="button" data-action="update-ssid">Valider</button>
@@ -137,11 +137,15 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
 
     <!-- Réinitialisation -->
     <section class="config-section">
+      <h2>Réinitialisation du petit-bot aux paramètres de départ</h2>
       <button class="button" id="reset-btn" data-action="reset">Réinitialiser la configuration</button>
     </section>
 
     <div class="ota-update-button-container" id="otaButtonContainer" style="display: none;">
-      <a href="/ota" class="ota-update-button">Mise à jour</a>
+      <section class="config-section">
+        <h2>Mettre a jour le logiciel du petit-bot</h2>
+        <a href="/ota" class="ota-update-button">Mise à jour</a>
+      </section>
     </div>
   </main>
 
