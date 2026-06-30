@@ -79,6 +79,14 @@ document.addEventListener('DOMContentLoaded', function() {
       handleAction(action);
     });
   });
+
+  const hostname = window.location.hostname;
+  const pathname = window.location.pathname;
+
+  // Affiche le bouton UNIQUEMENT si l'url c'est 192.168.4.1/config
+  if (hostname === "192.168.4.1" && pathname === "/config") {
+    document.getElementById('otaButtonContainer').style.display = 'block';
+  }
 });
 
 /* ===== Mise à jour de l'interface ===== */
@@ -339,7 +347,7 @@ function updateSSID() {
       statusElement.textContent = `Erreur : ${error.message}`;
       statusElement.style.color = "red";
     });
-}
+};
 
 /* ===== Réinitialisation ===== */
 /**
@@ -362,12 +370,6 @@ function resetConfig() {
         alert(`Erreur : ${error.message}`);
       });
   }
-}
-
- document.addEventListener('DOMContentLoaded', function() { // todo modify the pathname not working properlly 
-    if (window.location.pathname === '/config' || window.location.pathname === '/config.html') {
-      document.getElementById('otaButtonContainer').style.display = 'block';
-    }else {console.log (window.location.pathname);}
-  });
+};
 )rawliteral";
 #endif
