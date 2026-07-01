@@ -17,6 +17,11 @@ static constexpr uint8_t PIN_MOTOR1 = 4;          // Broche moteur
 static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 // 0 et 3 pour esp32
 
+//todo navbar 
+//todo optimise the css via global.css
+//todo stop the broadcast ssid 
+//todo hide the red message of ota and check working of ota 
+
 
 // =================== Bibliothèques =========================
 //#include <WiFi.h>           // pour esp32
@@ -45,14 +50,14 @@ static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 #include "Page_HTML/config.h"
 #include "Page_HTML/connection_limit.h"
 #include "Page_HTML/programmer.h"
-
 #include "Page_HTML/ota.h" 
 
 // Scripts JavaScript
-#include "code_JS/config_js.h"
-#include "code_JS/telecommande_js.h"
-#include "code_JS/programmer_js.h"
-#include "code_JS/connectionLimit_js.h"
+#include "Code_JS/config_js.h"
+#include "Code_JS/telecommande_js.h"
+#include "Code_JS/programmer_js.h"
+#include "Code_JS/connectionLimit_js.h"
+#include "Code_JS/ota_js.h"
 
 // =================== Structures & Variables Globales ===========
 struct DeviceConfig {
@@ -330,10 +335,11 @@ void setupRoutes() {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
   });
 
-  server.on("/ota", []() {
+  server.on("/ota", []() {//todo chek because not working
   // Only allow access from 192.168.4.1 (the ESP8266's AP IP)
   if (server.client().remoteIP() == IPAddress(192, 168, 4, 1) ||
       WiFi.softAPIP() == IPAddress(192, 168, 4, 1)) {
+      
     server.send_P(200, "text/html", OTA_PAGE);
   } else {
     server.send(403, "text/plain", "Access denied: OTA only available from 192.168.4.1");
@@ -354,6 +360,7 @@ void setupRoutes() {
   server.on("/telecommande.js", []() { server.send_P(200, "text/javascript", TELECOMMANDE_JS); });
   server.on("/programmer.js", []() { server.send_P(200, "text/javascript", PROGRAMMER_JS); });
   server.on("/connectionLimit.js", []() { server.send_P(200, "text/javascript", CONNECT_LIMIT_JS); });
+  server.on("/ota.js", []() { server.send_P(200, "text/javascript", OTA_JS); });
 
   // Gestion des requêtes non trouvées
   server.onNotFound([]() {
