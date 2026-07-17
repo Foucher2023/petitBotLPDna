@@ -74,18 +74,37 @@ document.addEventListener('DOMContentLoaded', function() {
   // Écouteur UNIQUE pour les boutons classiques (via click)
   document.querySelectorAll('button[data-action]').forEach(button => {
     button.addEventListener('click', (e) => {
-      e.stopPropagation(); // Évite la propagation
+      e.stopPropagation();
       const action = button.dataset.action;
       handleAction(action);
     });
   });
 
+  // --- Gestion de l'affichage du bouton OTA ---
   const hostname = window.location.hostname;
-  const pathname = window.location.pathname;
+  const theParam = "BASE_URL";
 
-  // Affiche le bouton UNIQUEMENT si l'url c'est 192.168.4.1/config
-  if (hostname === "192.168.4.1" && pathname === "/config") {
-    document.getElementById('otaButtonContainer').style.display = 'block';
+  // Fonction pour vérifier et afficher le bouton
+  function checkAndShowOTAButton() {
+    if (hostname === "192.168.4.1" || hostname === sessionStorage.getItem('BASE_URL')) {
+      document.getElementById('otaButtonContainer')?.style.setProperty('display', 'block');
+    }
+  }
+
+  // Si BASE_URL n'est pas encore dans sessionStorage, on le récupère
+  if (!sessionStorage.getItem('BASE_URL')) {
+    fetch(`/get-static-value?param=${encodeURIComponent(theParam)}`)
+      .then(response => response.text())
+      .then(data => {
+        const url_host = data + ".local";
+        sessionStorage.setItem('BASE_URL', url_host);
+        // vérifie APRÈS avoir stocké BASE_URL
+        checkAndShowOTAButton();
+      })
+      .catch(error => console.error("Erreur :", error));
+  } else {
+    // Si BASE_URL est déjà dans sessionStorage, on vérifie directement
+    checkAndShowOTAButton();
   }
 });
 

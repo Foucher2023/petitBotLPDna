@@ -6,17 +6,44 @@ document.addEventListener('DOMContentLoaded', function() {
   const hostname = window.location.hostname;
   const pathname = window.location.pathname;
 
-  // cacher le message important UNIQUEMENT si l'url est 192.168.4.1/ota
-  if (hostname === "192.168.4.1" && pathname === "/ota") {
+  const theParam = "BASE_URL";
+  if (!sessionStorage.getItem('BASE_URL')){
+  fetch(`/get-static-value?param=${encodeURIComponent(theParam)}`)
+  .then(response => response.text())
+  .then(data => {
+    let url_host = data + ".local";
+    sessionStorage.setItem('Base_URL', url_host);
+    })
+    .catch(error => console.error("Erreur :", error));
+  };
+  
+  // cacher le message important UNIQUEMENT si l'url est 192.168.4.1 ou le base_URL
+  if (hostname === "192.168.4.1" || hostname === sessionStorage.getItem('BASE_URL')) {
+  //todo check not working properly 
     document.getElementById('message-ota-important').style.display = 'none';
   }else {
     document.getElementById('form-ota-working-block').style.display = 'none';
   }
-)};
+
+document.getElementById('fileInput').addEventListener('change', function(event) {
+  const fileInput = event.target;
+  const fileNameDisplay = document.getElementById('fileNameDisplay');
+
+  if (fileInput.files.length > 0) {
+    // Affiche le nom du fichier sélectionné
+    fileNameDisplay.textContent = fileInput.files[0].name;
+  } else {
+    // Si aucun fichier n'est sélectionné
+    fileNameDisplay.textContent = 'Aucun fichier sélectionné';
+  }
+});
+
+});
 
 function startOTA() {
   const fileInput = document.getElementById('fileInput');
   const file = fileInput.files[0];
+  console.log(jojo--);
 
   if (!file) {
     showStatus('Veuillez sélectionner un fichier .bin', 'error');

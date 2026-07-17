@@ -42,8 +42,8 @@ function startConnectionCheck() {
     clearInterval(checkConnectionInterval);
   }
 
-  // Vérifie toutes les 2 secondes
-  checkConnectionInterval = setInterval(checkConnections, 3000);
+  // Vérifie toutes les 1.5 secondes
+  checkConnectionInterval = setInterval(checkConnections, 1500);
 }
 
 function checkConnections() {
