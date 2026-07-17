@@ -44,6 +44,8 @@ const char OTA_PAGE[] PROGMEM = R"rawliteral(
     <div id="form-ota-working-block" style="display: block;>
     <form class="ota-form" id="otaForm">
       <input type="file" id="fileInput" class="ota-input" accept=".bin">
+      <span id="fileNameDisplay" class="file-name">Aucun fichier sélectionné</span>
+      //todo afficher text quand fichier téléversé 
       <button type="button" class="ota-button" onclick="startOTA()">Démarrer la mise à jour</button>
     </form>
     </div>
