@@ -9,6 +9,7 @@ static constexpr uint8_t LED_PIN = 2;          // Broche de la LED intégrée (N
 // 8 pour esp32
 static constexpr uint8_t DNS_PORT = 53;       // Port DNS
 static constexpr uint8_t SERVER_PORT = 80;       // Port SERVER
+static constexpr const char* BASE_URL = "petitbot";
 static constexpr uint16_t EEPROM_SIZE = 256; // Taille de l'EEPROM
 static constexpr uint8_t BUFFER_SIZE = 64;
 static constexpr const char* DEFAULT_SSID = "Petitbot test";
@@ -17,24 +18,30 @@ static constexpr uint8_t PIN_MOTOR1 = 4;          // Broche moteur
 static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 // 0 et 3 pour esp32
 
-//todo navbar 
-//todo optimise the css via global.css
-//todo stop the broadcast ssid 
-//todo hide the red message of ota and check working of ota 
-
+// todo navbar in file to refacto all files
+// todo optimise the css via global.css
+// todo stop the broadcast ssid -- optional 
+// todo hide the red message of ota -- check 
+// todo ota display the name file when upload 
 
 // =================== Bibliothèques =========================
+//todo trouvé les include pour esp32 ESP8266HTTPUpdateServer et ESP8266mDNS
+
 //#include <WiFi.h>           // pour esp32
 //#include <WebServer.h>      // pour esp32
 //#include <ESP32Servo.h>     // pour esp32
 
+#include <ESP8266HTTPUpdateServer.h> //ota 
+#include <ESP8266mDNS.h> // pour ce connecter à base_url 
+
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <Servo.h>
+// pour les deux version de code 
 #include <DNSServer.h>
 #include <EEPROM.h>
 
-#include <ESP8266HTTPUpdateServer.h>
+
 // =================== Fichiers Externes ======================
 // Styles CSS
 #include "Style_des_pages/global_style.h"
@@ -171,7 +178,7 @@ void setWifi() {
   Serial.println(config.ssid);
   Serial.print("IP: ");
   Serial.println(apIP);
-
+  MDNS.begin(BASE_URL);
 }
 
 // =================== Handlers HTTP =======================
@@ -182,6 +189,29 @@ snprintf(buffer, sizeof(buffer), "%d,%d,%d,%d,%d,%s",
          config.pinMotor1, config.pinMotor2, config.ssid);
 server.send(200, "text/plain", buffer);
 }
+
+
+void handleGetStaticValue() {
+  if (!server.hasArg("param")) {
+    Serial.println("Erreur : Argument 'param' manquant");
+    server.send(400, "text/plain", "Erreur : Argument 'param' manquant");
+    return;
+  }
+  String wantedStaticVal = server.arg("param");
+  Serial.print("Paramètre demandé : ");
+  Serial.println(wantedStaticVal);
+
+  if (wantedStaticVal == "LED_PIN") {
+    server.send(200, "text/plain", String(LED_PIN));
+  }
+  else if (wantedStaticVal == "BASE_URL") {
+    server.send(200, "text/plain", String(BASE_URL));
+  }
+  else {
+    Serial.println("Paramètre inconnu");
+    server.send(400, "text/plain", "Erreur : Paramètre inconnu");
+  }
+};
 
 void handleUpdateState() {
   Serial.print("param: "); Serial.println(server.arg("param"));
@@ -299,6 +329,7 @@ void handleRestartWiFi() {
 void setupRoutes() {
   // Endpoints API
   server.on("/get-values-EEPROM", handleGetValueEEPROM);
+  server.on("/get-static-value",handleGetStaticValue);
   server.on("/update-state", handleUpdateState);
   server.on("/UseTelecommande", handleTelecommande);
   server.on("/stopMotors", handleStopMotors);
@@ -335,14 +366,19 @@ void setupRoutes() {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
   });
 
-  server.on("/ota", []() {//todo chek because not working
-  // Only allow access from 192.168.4.1 (the ESP8266's AP IP)
-  if (server.client().remoteIP() == IPAddress(192, 168, 4, 1) ||
-      WiFi.softAPIP() == IPAddress(192, 168, 4, 1)) {
-      
+  server.on("/ota", []() {
+  // Only allow access from 192.168.4.1 or BASE URL  
+  char urlHost[50];
+  strcpy(urlHost, BASE_URL);
+  strcat(urlHost, ".local");
+
+  if (server.hostHeader() == "192.168.4.1" || server.hostHeader() == urlHost) {
     server.send_P(200, "text/html", OTA_PAGE);
   } else {
-    server.send(403, "text/plain", "Access denied: OTA only available from 192.168.4.1");
+    char explainAccess [150];
+    strcpy(explainAccess, "Acces refuser : la page de mise a jour (OTA) est seulement accessible via l'adresse 192.168.4.1 ou " );
+    strcat(explainAccess, urlHost);
+    server.send(403, "text/plain", explainAccess );
   }
 });
 
