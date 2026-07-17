@@ -28,6 +28,7 @@ const char OTA_CSS[] PROGMEM = R"rawliteral(
       border-radius: 5px;
       cursor: pointer;
       font-size: 16px;
+      margin-top: 1vh;
     }
     .ota-button:hover {
       background: #45a049;
