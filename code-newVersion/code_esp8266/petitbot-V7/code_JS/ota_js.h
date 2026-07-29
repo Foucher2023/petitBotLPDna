@@ -24,27 +24,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }else {
     document.getElementById('form-ota-working-block').style.display = 'none';
   }
-
-document.getElementById('fileInput').addEventListener('change', function(event) {
-  const fileInput = event.target;
-  const fileNameDisplay = document.getElementById('fileNameDisplay');
-
-  if (fileInput.files.length > 0) {
-    // Affiche le nom du fichier sélectionné
-    fileNameDisplay.textContent = fileInput.files[0].name;
-  } else {
-    // Si aucun fichier n'est sélectionné
-    fileNameDisplay.textContent = 'Aucun fichier sélectionné';
-  }
-});
-
 });
 
 function startOTA() {
   const fileInput = document.getElementById('fileInput');
   const file = fileInput.files[0];
-  console.log(jojo--);
-
   if (!file) {
     showStatus('Veuillez sélectionner un fichier .bin', 'error');
     return;
