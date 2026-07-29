@@ -2,6 +2,19 @@
 #define PROGRAMMER_JS_H
 
 const char PROGRAMMER_JS[] PROGMEM = R"rawliteral(
+window.onload = function() {
+fetch('/navbar')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('navbar-placeholder').innerHTML = html;
+      document.querySelector('.navbar-toggle')?.addEventListener('click', function() {
+        document.getElementById('myNavbar').classList.toggle('open');
+      });
+      document.getElementById('button-programmation').classList.add('active');
+    })
+    .catch(error => console.error("Erreur lors du chargement de la navbar :", error));
+};
+
 /*****************************************************************
  * PetitBot - Block Programming Interface
  * --------------------------------------------
@@ -801,13 +814,10 @@ document.addEventListener("DOMContentLoaded", () => {
   loadProgram();
 });
 
-// Gestion du menu hamburger pour mobile
-document.querySelector('.navbar-toggle')?.addEventListener('click', function() {
-  document.getElementById('myNavbar')?.classList.toggle('open');
-});
-//====================================================================================================
+//==============================================================================================
 // Fonction pour vérifier l'URL et mettre à jour le/les boutons
 function isValidUrl() {
+//todo baseURL
   return window.location.hostname === '192.168.4.1';
 }
 

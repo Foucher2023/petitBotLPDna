@@ -7,6 +7,18 @@ let activeKey = null;
 
 /* ===== Initialisation ===== */
 window.onload = function() {
+  // Récupère la navbar
+  fetch('/navbar')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('navbar-placeholder').innerHTML = html;
+      document.querySelector('.navbar-toggle')?.addEventListener('click', function() {
+        document.getElementById('myNavbar').classList.toggle('open');
+      });
+      document.getElementById('button-remote').classList.add('active');
+    })
+    .catch(error => console.error("Erreur lors du chargement de la navbar :", error));
+    
   // Récupère l'état depuis l'ESP et met à jour le titre
   fetch('/get-values-EEPROM')
     .then(response => response.text())
@@ -144,11 +156,6 @@ document.addEventListener('keyup', function(e) {
       activeKey = null;
     }
   }
-});
-
-/* ===== Gestion du menu navbar ===== */
-document.querySelector('.navbar-toggle')?.addEventListener('click', function() {
-  document.getElementById('myNavbar')?.classList.toggle('open');
 });
 )rawliteral";
 #endif
