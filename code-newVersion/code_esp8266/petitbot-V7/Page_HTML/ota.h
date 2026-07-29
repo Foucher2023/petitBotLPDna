@@ -41,13 +41,13 @@ const char OTA_PAGE[] PROGMEM = R"rawliteral(
    
     <p class="infoInBlack">Sélectionnez un fichier .bin pour mettre à jour le PetitBot.</p>
   
-    <div id="form-ota-working-block" style="display: block;>
-    <form class="ota-form" id="otaForm">
-      <input type="file" id="fileInput" class="ota-input" accept=".bin">
-      <span id="fileNameDisplay" class="file-name">Aucun fichier sélectionné</span>
-      //todo afficher text quand fichier téléversé 
-      <button type="button" class="ota-button" onclick="startOTA()">Démarrer la mise à jour</button>
-    </form>
+    <div id="form-ota-working-block" style="display: block;">
+      <div class="ota-form">
+        <form id="otaForm">
+          <input type="file" id="fileInput" class="ota-input" accept=".bin">
+          <button type="button" class="ota-button" onclick="startOTA()">Démarrer la mise à jour</button>
+        </form>
+      </div>
     </div>
 
     <div class="ota-progress">
