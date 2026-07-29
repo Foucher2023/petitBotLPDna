@@ -21,8 +21,8 @@ static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 // todo navbar in file to refacto all files
 // todo optimise the css via global.css
 // todo stop the broadcast ssid -- optional 
-// todo hide the red message of ota -- check 
-// todo ota display the name file when upload 
+
+
 
 // =================== Bibliothèques =========================
 //todo trouvé les include pour esp32 ESP8266HTTPUpdateServer et ESP8266mDNS
