@@ -2,6 +2,7 @@
 #define NAVBAR_H
 
 const char NAVBAR_HTML[] PROGMEM = R"rawliteral(
+<link rel="stylesheet" href="/navbar.css">
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -14,10 +15,9 @@ const char NAVBAR_HTML[] PROGMEM = R"rawliteral(
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="/config">Configuration</a></li>
-        <li><a href="/telecommande">Télécommande</a></li>
-        <li><a href="/programmer">Programmer</a></li>
-        <li><a href="/ota">OTA Update</a></li>
+        <li id="button-config"><a href="/config">Configuration</a></li>
+        <li id="button-remote"><a href="/telecommande">Télécommande</a></li>
+        <li id="button-programmation"><a href="/programmer">Programmer</a></li>
       </ul>
     </div>
   </div>

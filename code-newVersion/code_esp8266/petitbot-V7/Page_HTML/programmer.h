@@ -8,31 +8,11 @@ const char PROGRAMMER_PAGE[] PROGMEM = R"rawliteral(
   <meta charset="UTF-8">
   <title>Programmer Petit Bot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="/navbar.css">
   <link rel="stylesheet" href="/global.css">
   <link rel="stylesheet" href="/programmer.css">
 </head>
 <body>
-  <nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="index.html">PetitBot</a>
-      </div>
-      <div class="collapse navbar-collapse" id="myNavbar">
-        <ul class="nav navbar-nav">
-          <li><a href="/config">Configuration</a></li>
-          <li><a href="telecommande.html">Télécommande</a></li>
-          <li class="active"><a href="/programmer">Programmer</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
+<div id="navbar-placeholder"></div>
   <main class="container">
     <h1>Programmer Petit Bot</h1>
 

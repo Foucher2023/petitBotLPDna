@@ -8,34 +8,13 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
   <meta charset="UTF-8">
   <title>PetitBot - Configuration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="/navbar.css">
   <link rel="stylesheet" href="/global.css">
   <link rel="stylesheet" href="/config.css">
 </head>
 <body>
-  <nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="index.html">PetitBot</a>
-      </div>
-      <div class="collapse navbar-collapse" id="myNavbar">
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="/config">Configuration</a></li>
-          <li><a href="telecommande.html">Télécommande</a></li>
-          <li><a href="/programmer">Programmer</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
+  <div id="navbar-placeholder"></div>
   <main>
     <h1>Configuration du PetitBot</h1>
-
     <!-- État de la LED -->
     <section class="config-section">
       <h2>État de la LED</h2>

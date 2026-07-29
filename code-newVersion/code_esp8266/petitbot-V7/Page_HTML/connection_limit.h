@@ -13,7 +13,6 @@ const char CONNECTION_LIMIT_PAGE[] PROGMEM = R"rawliteral(
 <body>
   <main>
     <h1>Connexion Refusée</h1>
-
     <section class="error-container" role="alert" aria-live="polite">
       <div class="error-message">
         <p>Un appareil est déjà connecté au PetitBot.</p>
@@ -22,11 +21,7 @@ const char CONNECTION_LIMIT_PAGE[] PROGMEM = R"rawliteral(
     </section>
 
     <div id="restart-button">
-    <button
-      class="restart-button"
-      data-action="restart-wifi"
-      aria-label="Redémarrer le réseau Wi-Fi"
-    >
+    <button class="restart-button" data-action="restart-wifi" aria-label="Redémarrer le réseau Wi-Fi">
       Redémarrer le réseau
     </button>
     </div>
