@@ -18,10 +18,9 @@ static constexpr uint8_t PIN_MOTOR1 = 4;          // Broche moteur
 static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 // 0 et 3 pour esp32
 
-// todo navbar in file to refacto all files
 // todo optimise the css via global.css
 // todo stop the broadcast ssid -- optional 
-
+// todo check baseURL in programmer_JS
 
 
 // =================== Bibliothèques =========================
@@ -53,11 +52,13 @@ static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 #include "Style_des_pages/ota_style.h"
 
 // Pages HTML
+#include "Page_HTML/navbar.h"
 #include "Page_HTML/telecommande.h"
 #include "Page_HTML/config.h"
 #include "Page_HTML/connection_limit.h"
 #include "Page_HTML/programmer.h"
-#include "Page_HTML/ota.h" 
+#include "Page_HTML/ota.h"
+
 
 // Scripts JavaScript
 #include "Code_JS/config_js.h"
@@ -245,13 +246,10 @@ void handleTelecommande() {
     server.send(400, "text/plain", "Missing arg 'val'");
     return;
   }
-
   attachServos();
-
   String dir = server.arg("val");
   int g = 0;
   int d = 0;
-
   if (dir == "FORWARD") {
     g = 180;
     d = 0;
@@ -325,9 +323,9 @@ void handleRestartWiFi() {
   server.send(200, "text/plain", "WiFi restarted");
 }
 
-// =================== Routage des pages =======================
 void setupRoutes() {
-  // Endpoints API
+// ==================== Routage des fonctions qui réponde a un appel externe ==================
+
   server.on("/get-values-EEPROM", handleGetValueEEPROM);
   server.on("/get-static-value",handleGetStaticValue);
   server.on("/update-state", handleUpdateState);
@@ -337,7 +335,13 @@ void setupRoutes() {
   server.on("/getNumConnections", handleGetNumConnections);
   server.on("/restart-wifi", handleRestartWiFi);
 
-  // Pages HTML
+  // =================== Routage des pages =======================
+    // Pages HTML
+  server.on("/navbar", []() {
+    server.send_P(200, "text/html", NAVBAR_HTML);
+  });
+
+
   server.on("/telecommande", []() {
     if (WiFi.softAPgetStationNum() > 1 || isRedirectToLimitConnect) {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
@@ -371,7 +375,6 @@ void setupRoutes() {
   char urlHost[50];
   strcpy(urlHost, BASE_URL);
   strcat(urlHost, ".local");
-
   if (server.hostHeader() == "192.168.4.1" || server.hostHeader() == urlHost) {
     server.send_P(200, "text/html", OTA_PAGE);
   } else {
@@ -382,21 +385,21 @@ void setupRoutes() {
   }
 });
 
-  // Fichiers statiques CSS
-  server.on("/global.css", []() { server.send_P(200, "text/css", GLOBAL_CSS); });
-  server.on("/navbar.css", []() { server.send_P(200, "text/css", NAVBAR_CSS); });
-  server.on("/config.css", []() { server.send_P(200, "text/css", CONFIG_CSS); });
-  server.on("/telecommande.css", []() { server.send_P(200, "text/css", TELECOMMANDE_CSS); });
-  server.on("/programmer.css", []() { server.send_P(200, "text/css", PROGRAMMER_CSS); });
-  server.on("/connectionLimit.css", []() { server.send_P(200, "text/css", CONNECT_LIMIT_CSS); });
-  server.on("/ota.css", []() { server.send_P(200, "text/css", OTA_CSS); });
+  // Fichiers CSS
+  server.on("/global.css", []()           { server.send_P(200, "text/css", GLOBAL_CSS); });
+  server.on("/navbar.css", []()           { server.send_P(200, "text/css", NAVBAR_CSS); });
+  server.on("/config.css", []()           { server.send_P(200, "text/css", CONFIG_CSS); });
+  server.on("/telecommande.css", []()     { server.send_P(200, "text/css", TELECOMMANDE_CSS); });
+  server.on("/programmer.css", []()       { server.send_P(200, "text/css", PROGRAMMER_CSS); });
+  server.on("/connectionLimit.css", []()  { server.send_P(200, "text/css", CONNECT_LIMIT_CSS); });
+  server.on("/ota.css", []()              { server.send_P(200, "text/css", OTA_CSS); });
 
   // Fichiers statiques JS
-  server.on("/config.js", []() { server.send_P(200, "text/javascript", CONFIG_JS); });
-  server.on("/telecommande.js", []() { server.send_P(200, "text/javascript", TELECOMMANDE_JS); });
-  server.on("/programmer.js", []() { server.send_P(200, "text/javascript", PROGRAMMER_JS); });
+  server.on("/telecommande.js", []()    { server.send_P(200, "text/javascript", TELECOMMANDE_JS); });
+  server.on("/config.js", []()          { server.send_P(200, "text/javascript", CONFIG_JS); });
+  server.on("/programmer.js", []()      { server.send_P(200, "text/javascript", PROGRAMMER_JS); });
   server.on("/connectionLimit.js", []() { server.send_P(200, "text/javascript", CONNECT_LIMIT_JS); });
-  server.on("/ota.js", []() { server.send_P(200, "text/javascript", OTA_JS); });
+  server.on("/ota.js", []()             { server.send_P(200, "text/javascript", OTA_JS); });
 
   // Gestion des requêtes non trouvées
   server.onNotFound([]() {
