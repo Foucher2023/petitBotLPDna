@@ -98,7 +98,7 @@ const char PROGRAMMER_PAGE[] PROGMEM = R"rawliteral(
         <div class="main-buttons">
           <button id="run-btn" data-action="run">Exécuter</button>
           <button id="stop-btn" data-action="stop">Stop</button>
-          <button id="clear-btn" data-action="clear">Effacer</button>
+          <button id="clear-btn" data-action="clear">Effacer la zone de programme</button>
         </div>
         <div class="secondary-buttons">
           <button id="save-btn" data-action="save-session">Sauvegarder dans le navigateur</button>
