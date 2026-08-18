@@ -4,21 +4,21 @@
 const char PROGRAMMER_JS[] PROGMEM = R"rawliteral(
 document.addEventListener('DOMContentLoaded', function() {
   const theParam = "BASE_URL";
-  if (!sessionStorage.getItem('BASE_URL')) {
-    fetch(`/get-static-value?param=${encodeURIComponent(theParam)}`)
-      .then(response => response.text())
-      .then(data => {
-        let url_host = data + ".local";
-        sessionStorage.setItem('BASE_URL', url_host);
-      })
-      .then(() => { initializeExportButton();})
-      .catch(error => console.error("Erreur :", error));
-  }
-      updateUI();
+  if (!sessionStorage.getItem('BASE_URL')){
+  fetch(`/get-static-value?param=${encodeURIComponent(theParam)}`)
+  .then(response => response.text())
+  .then(data => {
+    let url_host = data + ".local";
+    sessionStorage.setItem('BASE_URL', url_host);})
+    .then(() => {initializeExportButton();})
+    .catch(error => console.error("Erreur :", error));
+  };
 });
 
+
+
 window.onload = function() {
-  fetch('/navbar')
+fetch('/navbar')
     .then(response => response.text())
     .then(html => {
       document.getElementById('navbar-placeholder').innerHTML = html;
@@ -30,8 +30,14 @@ window.onload = function() {
     .catch(error => console.error("Erreur lors du chargement de la navbar :", error));
 };
 
-// ====================== ÉTAT GLOBAL ======================
-// Tableau des blocs du programme, état d'exécution et d'animation
+/*****************************************************************
+ * PetitBot - Block Programming Interface
+ * --------------------------------------------
+ * A visual programming environment for controlling the PetitBot robot.
+ * Supports drag-and-drop block programming with loops and nested structures.
+ *****************************************************************/
+
+// ====================== GLOBAL STATE ======================
 let program = [];
 let isRunning = false;
 let isAnimating = false;
@@ -47,8 +53,13 @@ const blockNames = {
   LOOP: "Boucle"
 };
 
-// ====================== FONCTIONS UTILITAIRES ======================
-// Compte le nombre de blocs d'un type donné dans le programme (y compris dans les boucles)
+// ====================== UTILITY FUNCTIONS ======================
+/**
+ * Compte le nombre de blocs d'un type donné dans le programme (y compris dans les boucles)
+ * @param {Array} program - Le programme ou sous-programme (pour les boucles)
+ * @param {string} type - Le type de bloc à compter
+ * @returns {number} - Le nombre de blocs du type spécifié
+ */
 function countBlocksByType(program, type) {
   let count = 0;
   for (const step of program) {
@@ -60,7 +71,11 @@ function countBlocksByType(program, type) {
   return count;
 }
 
-// Compte le nombre total de blocs dans le programme (y compris dans les boucles)
+/**
+ * Compte le nombre total de blocs dans le programme (y compris dans les boucles)
+ * @param {Array} program - Le programme ou sous-programme
+ * @returns {number} - Le nombre total de blocs
+ */
 function countTotalBlocks(program) {
   let count = program.length;
   for (const step of program) {
@@ -71,7 +86,9 @@ function countTotalBlocks(program) {
   return count;
 }
 
-// Met à jour les compteurs de blocs dans l'interface
+/**
+ * Met à jour les compteurs de blocs dans l'interface
+ */
 function updateBlockCounters() {
   document.getElementById("NumbForward").textContent = `Nb : ${countBlocksByType(program, "FORWARD")}`;
   document.getElementById("NumbReverse").textContent = `Nb : ${countBlocksByType(program, "REVERSE")}`;
@@ -81,16 +98,20 @@ function updateBlockCounters() {
   document.getElementById("NumbWait").textContent = `Nb : ${countBlocksByType(program, "WAIT")}`;
   document.getElementById("NumbLoop").textContent = `Nb : ${countBlocksByType(program, "LOOP")}`;
   document.getElementById("NumbBlock").textContent = `Nombre de blocs : ${countTotalBlocks(program)}`;
+
 }
 
-// Met à jour l'interface utilisateur
-function updateUI() {
+function updateUI(){
   updateMoveButtons();
   updateBlockCounters();
-  setStateButton();
-}
+setState-SaveSession-button();
+};
 
-// Supprime les références circulaires pour la sérialisation JSON
+/**
+ * Supprime les références circulaires pour la sérialisation JSON
+ * @param {Object} obj - L'objet à nettoyer
+ * @returns {Object} - L'objet sans références circulaires
+ */
 function removeCircularReferences(obj) {
   const seen = new WeakSet();
   return JSON.parse(JSON.stringify(obj, (key, value) => {
@@ -103,8 +124,12 @@ function removeCircularReferences(obj) {
   }));
 }
 
-// ====================== ANIMATIONS ======================
-// Anime le déplacement d'un bloc
+// ====================== ANIMATION UTILITIES ======================
+/**
+ * Anime le déplacement d'un bloc
+ * @param {HTMLElement} blockElement - L'élément bloc à animer
+ * @param {string} direction - 'up' ou 'down'
+ */
 function animateBlockMove(blockElement, direction) {
   if (direction === 'up') {
     blockElement.classList.add('moving-up');
@@ -118,13 +143,19 @@ function animateBlockMove(blockElement, direction) {
   }, 300);
 }
 
-// ====================== GESTION DU DRAG AND DROP ======================
-// Permet le drop sur les zones cibles
+// ====================== DRAG AND DROP HANDLERS ======================
+/**
+ * Permet le drop sur les zones cibles
+ * @param {DragEvent} ev - L'événement de drop
+ */
 window.allowDrop = function(ev) {
   ev.preventDefault();
 };
 
-// Gère le début du drag pour les blocs
+/**
+ * Gère le début du drag pour les blocs
+ * @param {DragEvent} ev - L'événement de drag
+ */
 window.drag = function(ev) {
   if (!ev.target.classList.contains('block')) return;
   ev.dataTransfer.setData("text/plain", ev.target.id);
@@ -139,7 +170,10 @@ window.drag = function(ev) {
   }
 };
 
-// Gère le drop des blocs
+/**
+ * Gère le drop des blocs
+ * @param {DragEvent} ev - L'événement de drop
+ */
 window.drop = function(ev) {
   ev.preventDefault();
   ev.stopPropagation();
@@ -149,6 +183,7 @@ window.drop = function(ev) {
   const time = ev.dataTransfer.getData("time");
   const iterations = ev.dataTransfer.getData("iterations");
 
+  // Vérifie si on drop dans une boucle
   const loopBody = ev.target.closest('.loop-body');
   if (loopBody) {
     const loopBlock = loopBody.closest('.dropped-block');
@@ -159,14 +194,24 @@ window.drop = function(ev) {
     }
   }
 
+  // Sinon, ajoute au programme principal
   addBlockToProgram(blockId, blockType, time, -1, iterations);
 };
 
-// ====================== GESTION DES BLOCS ======================
-// Ajoute un bloc au programme
+// ====================== BLOCK MANAGEMENT ======================
+/**
+ * Ajoute un bloc au programme
+ * @param {string} blockId - ID du bloc
+ * @param {string} blockType - Type de bloc (FORWARD, REVERSE, etc.)
+ * @param {number|null} time - Temps pour les blocs WAIT
+ * @param {number} insertAt - Index d'insertion (-1 pour ajouter à la fin)
+ * @param {number|null} iterations - Nombre d'itérations pour les boucles
+ * @param {Object|null} parentLoop - Boucle parente si on ajoute dans une boucle
+ */
 function addBlockToProgram(blockId, blockType, time, insertAt = -1, iterations = null, parentLoop = null) {
   if (isRunning || isAnimating) return;
 
+  // Crée l'objet de données du bloc
   const blockData = {
     type: blockType,
     ...(blockType === 'WAIT' && { time: parseInt(time) || 1 }),
@@ -176,6 +221,7 @@ function addBlockToProgram(blockId, blockType, time, insertAt = -1, iterations =
     })
   };
 
+  // Ajoute au programme ou à la boucle parente
   if (parentLoop) {
     parentLoop.children.push(blockData);
     blockData.parent = parentLoop;
@@ -185,10 +231,14 @@ function addBlockToProgram(blockId, blockType, time, insertAt = -1, iterations =
     program.push(blockData);
   }
 
+  // Met à jour l'interface
   renderProgram();
 }
 
-// Met à jour le nombre d'itérations d'une boucle
+/**
+ * Met à jour le nombre d'itérations d'une boucle
+ * @param {HTMLElement} input - L'élément input qui a changé
+ */
 window.updateLoopIterations = function(input) {
   const blockElement = input.closest('.dropped-block');
   const blockIndex = parseInt(blockElement.dataset.stepIndex);
@@ -197,7 +247,11 @@ window.updateLoopIterations = function(input) {
   }
 };
 
-// Ajoute un bloc directement dans une boucle
+/**
+ * Ajoute un bloc directement dans une boucle
+ * @param {string} blockType - Type de bloc à ajouter
+ * @param {Event} event - L'événement clic
+ */
 window.placeBlockInLoop = function(blockType, event) {
   if (isRunning || isAnimating) return;
 
@@ -207,37 +261,50 @@ window.placeBlockInLoop = function(blockType, event) {
   const loopIndex = parseInt(loopBlock.dataset.stepIndex);
   if (loopIndex < 0 || !program[loopIndex] || program[loopIndex].type !== "LOOP") return;
 
+  // Crée le nouveau bloc
   const newBlock = { type: blockType };
   if (blockType === "WAIT") newBlock.time = 1;
 
+  // Ajoute à la boucle
   if (!program[loopIndex].children) program[loopIndex].children = [];
   program[loopIndex].children.push(newBlock);
 
+  // Met à jour l'interface
   renderProgram();
 };
 
-// ====================== PLACEMENT DES BLOCS ======================
-// Place un bloc standard via son bouton
+// ====================== BLOCK PLACEMENT ======================
+/**
+ * Place un bloc standard via son bouton
+ * @param {string} blockId - ID du bloc à placer
+ */
 window.placeBlock = function(blockId) {
   const block = document.getElementById(blockId);
   const blockType = block.dataset.blockType;
   addBlockToProgram(blockId, blockType, 1);
 };
 
-// Place un bloc LOOP via son bouton
+/**
+ * Place un bloc LOOP via son bouton
+ */
 window.placeLoopBlock = function() {
   const iterations = document.getElementById('loop-iterations').value;
   addBlockToProgram('loop-block', 'LOOP', null, -1, iterations);
 };
 
-// Place un bloc WAIT via son bouton
+/**
+ * Place un bloc WAIT via son bouton
+ */
 window.placeWaitBlock = function() {
   const time = document.getElementById('wait-time').value;
   addBlockToProgram('wait-block', 'WAIT', time);
 };
 
-// ====================== DÉPLACEMENT DES BLOCS ======================
-// Déplace un bloc vers le haut
+// ====================== BLOCK MOVEMENT ======================
+/**
+ * Déplace un bloc vers le haut
+ * @param {HTMLElement} button - Le bouton "▲" cliqué
+ */
 window.moveBlockUp = function(button) {
   if (isAnimating) return;
 
@@ -252,12 +319,15 @@ window.moveBlockUp = function(button) {
   isAnimating = true;
   const prevBlock = blocks[index - 1];
 
+  // Anime les blocs
   animateBlockMove(blockElement, 'up');
   animateBlockMove(prevBlock, 'down');
 
+  // Déplace dans le DOM après l'animation
   setTimeout(() => {
     parent.insertBefore(blockElement, prevBlock);
 
+    // Met à jour le tableau program ou children
     if (loopBody) {
       const loopBlock = loopBody.closest('.dropped-block');
       const loopIndex = parseInt(loopBlock.dataset.stepIndex);
@@ -274,7 +344,10 @@ window.moveBlockUp = function(button) {
   }, 300);
 };
 
-// Déplace un bloc vers le bas
+/**
+ * Déplace un bloc vers le bas
+ * @param {HTMLElement} button - Le bouton "▼" cliqué
+ */
 window.moveBlockDown = function(button) {
   if (isAnimating) return;
 
@@ -289,12 +362,15 @@ window.moveBlockDown = function(button) {
   isAnimating = true;
   const nextBlock = blocks[index + 1];
 
+  // Anime les blocs
   animateBlockMove(blockElement, 'down');
   animateBlockMove(nextBlock, 'up');
 
+  // Déplace dans le DOM après l'animation
   setTimeout(() => {
     parent.insertBefore(nextBlock, blockElement);
 
+    // Met à jour le tableau program ou children
     if (loopBody) {
       const loopBlock = loopBody.closest('.dropped-block');
       const loopIndex = parseInt(loopBlock.dataset.stepIndex);
@@ -311,7 +387,9 @@ window.moveBlockDown = function(button) {
   }, 300);
 };
 
-// Met à jour l'état des boutons de déplacement (▲ et ▼)
+/**
+ * Met à jour l'état des boutons de déplacement (▲ et ▼)
+ */
 function updateMoveButtons() {
   const programArea = document.getElementById("program-area");
   const allBlocks = programArea.querySelectorAll('.dropped-block, .loop-body .dropped-block');
@@ -326,10 +404,13 @@ function updateMoveButtons() {
     if (upButton) upButton.disabled = index === 0;
     if (downButton) downButton.disabled = index === blocks.length - 1;
   });
-};
+}
 
-// ====================== SUPPRESSION DES BLOCS ======================
-// Supprime un bloc du programme
+// ====================== BLOCK REMOVAL ======================
+/**
+ * Supprime un bloc du programme
+ * @param {HTMLElement} button - Le bouton "×" cliqué
+ */
 window.removeBlock = function(button) {
   if (isRunning || isAnimating) return;
 
@@ -337,6 +418,7 @@ window.removeBlock = function(button) {
   const loopBody = blockElement.closest('.loop-body');
   const programArea = document.getElementById("program-area");
 
+  // Si le bloc est dans une boucle
   if (loopBody) {
     const loopBlock = loopBody.closest('.dropped-block');
     const loopIndex = parseInt(loopBlock.dataset.stepIndex);
@@ -345,19 +427,24 @@ window.removeBlock = function(button) {
     if (loopIndex >= 0 && program[loopIndex]?.type === "LOOP" && program[loopIndex].children) {
       program[loopIndex].children.splice(childIndex, 1);
     }
-  } else {
+  }
+  // Si le bloc est dans le programme principal
+  else {
     const blockIndex = parseInt(blockElement.dataset.stepIndex);
     if (blockIndex >= 0 && blockIndex < program.length) {
       program.splice(blockIndex, 1);
     }
   }
 
+  // Supprime du DOM
   blockElement.remove();
   updateUI();
 };
 
-// ====================== CONTRÔLE DU PROGRAMME ======================
-// Efface le programme actuel
+// ====================== PROGRAM CONTROL ======================
+/**
+ * Efface le programme actuel
+ */
 window.clearProgram = function() {
   if (isRunning) return;
   fetch('/stopMotors').catch(() => {});
@@ -365,7 +452,9 @@ window.clearProgram = function() {
   renderProgram();
 };
 
-// Efface le programme sauvegardé dans sessionStorage
+/**
+ * Efface le programme sauvegardé dans sessionStorage
+ */
 window.clearSessionStorage = function() {
   if (sessionStorage.getItem("petitbotProgram")) {
     sessionStorage.removeItem("petitbotProgram");
@@ -373,13 +462,16 @@ window.clearSessionStorage = function() {
   }
 };
 
-// Démarre l'exécution du programme
+/**
+ * Démarre l'exécution du programme
+ */
 window.runProgram = function() {
   if (program.length === 0) {
     alert("Aucun bloc dans le programme !");
     return;
   }
 
+  // Désactive les boutons pendant l'exécution
   document.getElementById("run-btn").disabled = true;
   document.getElementById("stop-btn").disabled = false;
   document.getElementById("clear-btn").disabled = true;
@@ -391,7 +483,9 @@ window.runProgram = function() {
   executeStep(0);
 };
 
-// Arrête l'exécution du programme
+/**
+ * Arrête l'exécution du programme
+ */
 window.stopProgram = function() {
   isRunning = false;
   const stopMotors = () => fetch('/stopMotors').catch(() => {});
@@ -399,6 +493,7 @@ window.stopProgram = function() {
   setTimeout(stopMotors, 100);
   setTimeout(stopMotors, 200);
 
+  // Réactive les boutons
   document.getElementById("run-btn").disabled = false;
   document.getElementById("stop-btn").disabled = true;
   document.getElementById("clear-btn").disabled = false;
@@ -407,8 +502,11 @@ window.stopProgram = function() {
   document.getElementById("export-btn").disabled = false;
 };
 
-// ====================== EXÉCUTION DU PROGRAMME ======================
-// Exécute une étape du programme
+// ====================== PROGRAM EXECUTION ======================
+/**
+ * Exécute une étape du programme
+ * @param {number} index - Index de l'étape à exécuter
+ */
 function executeStep(index) {
   if (index >= program.length || !isRunning) {
     stopProgram();
@@ -419,20 +517,28 @@ function executeStep(index) {
 
   if (step.type === 'LOOP') {
     executeLoop(step, 0, () => executeStep(index + 1));
-  } else if (step.type === 'WAIT') {
+  }
+  else if (step.type === 'WAIT') {
     setTimeout(() => isRunning && executeStep(index + 1), step.time * 1000);
-  } else if (step.type === 'STOP') {
+  }
+  else if (step.type === 'STOP') {
     fetch('/stopMotors')
       .then(() => isRunning && setTimeout(() => executeStep(index + 1), 500))
       .catch(() => stopProgram());
-  } else {
+  }
+  else {
     fetch(`/UseTelecommande?val=${step.type}`)
       .then(() => isRunning && setTimeout(() => executeStep(index + 1), 500))
       .catch(() => stopProgram());
   }
 }
 
-// Exécute une boucle
+/**
+ * Exécute une boucle
+ * @param {Object} loop - Données de la boucle
+ * @param {number} iteration - Itération actuelle (0-based)
+ * @param {Function} callback - Fonction à appeler à la fin de la boucle
+ */
 function executeLoop(loop, iteration, callback) {
   if (iteration >= loop.iterations || !isRunning) {
     callback();
@@ -444,7 +550,12 @@ function executeLoop(loop, iteration, callback) {
   });
 }
 
-// Exécute les enfants d'une boucle
+/**
+ * Exécute les enfants d'une boucle
+ * @param {Array} children - Tableau des enfants
+ * @param {number} childIndex - Index de l'enfant actuel
+ * @param {Function} callback - Fonction à appeler à la fin
+ */
 function executeChildren(children, childIndex, callback) {
   if (childIndex >= children.length || !isRunning) {
     callback();
@@ -455,28 +566,35 @@ function executeChildren(children, childIndex, callback) {
 
   if (child.type === 'WAIT') {
     setTimeout(() => isRunning && executeChildren(children, childIndex + 1, callback), child.time * 1000);
-  } else if (child.type === 'LOOP') {
+  }
+  else if (child.type === 'LOOP') {
     executeLoop(child, 0, () => isRunning && executeChildren(children, childIndex + 1, callback));
-  } else if (child.type === 'STOP') {
+  }
+  else if (child.type === 'STOP') {
     fetch('/stopMotors')
       .then(() => isRunning && setTimeout(() => executeChildren(children, childIndex + 1, callback), 500))
       .catch(() => stopProgram());
-  } else {
+  }
+  else {
     fetch(`/UseTelecommande?val=${child.type}`)
       .then(() => isRunning && setTimeout(() => executeChildren(children, childIndex + 1, callback), 500))
       .catch(() => stopProgram());
   }
 }
 
-// ====================== SAUVEGARDE/CHARGEMENT ======================
-// Sauvegarde le programme dans sessionStorage
+// ====================== PROGRAM SAVING/LOADING ======================
+/**
+ * Sauvegarde le programme dans sessionStorage
+ */
 window.saveProgramSession = function() {
   const cleanProgram = removeCircularReferences(program);
   sessionStorage.setItem("petitbotProgram", JSON.stringify(cleanProgram));
   alert("✅ Programme sauvegardé dans le navigateur");
 };
 
-// Exporte le programme sous forme de fichier JSON
+/**
+ * Exporte le programme sous forme de fichier JSON
+ */
 window.saveProgramLocal = function() {
   if (isValidUrl()) {
     const cleanProgram = removeCircularReferences(program);
@@ -497,8 +615,11 @@ window.saveProgramLocal = function() {
   }
 };
 
-// Charge un programme depuis sessionStorage ou un fichier
+/**
+ * Charge un programme depuis sessionStorage ou un fichier
+ */
 window.loadProgram = function() {
+  // Essaye de charger depuis sessionStorage
   const savedProgram = sessionStorage.getItem("petitbotProgram");
   if (savedProgram) {
     try {
@@ -511,6 +632,7 @@ window.loadProgram = function() {
     }
   }
 
+  // Sinon, utilise un sélecteur de fichier
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json,application/json';
@@ -542,8 +664,10 @@ window.loadProgram = function() {
   input.click();
 };
 
-// ====================== AFFICHAGE DU PROGRAMME ======================
-// Rend le programme dans le DOM
+// ====================== PROGRAM RENDERING ======================
+/**
+ * Rend le programme dans le DOM
+ */
 window.renderProgram = function() {
   const programArea = document.getElementById("program-area");
   programArea.innerHTML = "";
@@ -598,6 +722,7 @@ window.renderProgram = function() {
     programArea.appendChild(blockElement);
     step.element = blockElement;
 
+    // Rend les enfants si c'est une boucle
     if (step.type === 'LOOP' && step.children) {
       renderLoopChildren(step.children, blockElement.querySelector('.loop-body'));
     }
@@ -606,7 +731,11 @@ window.renderProgram = function() {
   updateUI();
 };
 
-// Rend les enfants d'une boucle
+/**
+ * Rend les enfants d'une boucle
+ * @param {Array} children - Tableau des enfants
+ * @param {HTMLElement} loopBody - Élément DOM où rendre les enfants
+ */
 function renderLoopChildren(children, loopBody) {
   loopBody.innerHTML = "";
   children.forEach((child, childIndex) => {
@@ -631,6 +760,7 @@ function renderLoopChildren(children, loopBody) {
     loopBody.appendChild(childElement);
     child.element = childElement;
 
+    // Rend les enfants récursivement si c'est une boucle
     if (child.type === 'LOOP' && child.children) {
       const childLoopBody = document.createElement("div");
       childLoopBody.className = "loop-body";
@@ -640,8 +770,10 @@ function renderLoopChildren(children, loopBody) {
   });
 }
 
-// ====================== DÉLÉGATION D'ÉVÉNEMENTS ======================
-document.addEventListener("DOMContentLoaded", () => {
+// ====================== EVENT DELEGATION ======================
+// Gestion centralisée des événements via délégation
+document.addEventListener("DOMContentLoaded", () => 
+{
   // Gestion des boutons "Placer"
   document.addEventListener("click", (e) => {
     const action = e.target.closest("[data-action]")?.dataset.action;
@@ -699,49 +831,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-
+  // Charger le programme depuis sessionStorage au démarrage
+  loadProgram();
 });
 
-// ====================== FONCTIONS UTILITAIRES POUR L'URL ======================
-// Vérifie si l'URL est valide
+//==============================================================================================
+// Fonction pour vérifier l'URL et mettre à jour le/les boutons
 function isValidUrl() {
   const hostname = window.location.hostname;
-  return hostname === "192.168.4.1" || hostname === sessionStorage.getItem('BASE_URL');
+  if (hostname === "192.168.4.1" || hostname === sessionStorage.getItem('BASE_URL')) {
+    return true;
+  }else {
+  return false;
+  }
 }
 
-// Active un bouton
 function enableButton(button) {
   button.style.opacity = '1';
   button.style.cursor = 'pointer';
   button.style.backgroundColor = '';
-  if (button.id === 'export-Btn') {
-    button.textContent = 'Exporter le programme';
-  }else if (button.id === 'save-Btn'){
-    button.textContent = 'sauvgarder dans le navigateur ';
-  }else if (button.id === 'run-Btn'){
-    button.textContent = 'Exécuter';
-  }else if (button.id === 'clear-btn'){
-    button.textContent = 'Effacer la zone de programme';
-  }
+  button.textContent = 'Exporter le programme';
 }
 
-// Désactive un bouton
 function disableButton(button) {
-    button.style.opacity = '0.5';
-    button.style.cursor = 'not-allowed';
-    button.style.backgroundColor = '';
-  if (button.id === 'export-Btn') {
-    button.textContent = 'pas d\'Export';
-  }else if (button.id === 'save-Btn'){
-    button.textContent = 'pas de sauvgarde';
-  }else if (button.id === 'run-Btn'){
-      button.textContent = 'pas d\'execution';
-  }else if (button.id === 'clear-btn'){
-    button.textContent = 'zone vide';
-  }
+  if (button === exportButton ){
+  button.style.opacity = '0.5';
+  button.style.cursor = 'not-allowed';
+  button.style.backgroundColor = '';
+  button.textContent = 'Exporter le programme';
+}else if (button === save-btn)
 }
 
-// Gère le clic sur le portail captif
 function handleCaptivePortalClick(button) {
   button.textContent = 'Quitter le portail captif';
   button.style.backgroundColor = 'red';
@@ -752,7 +872,6 @@ function handleCaptivePortalClick(button) {
   }, 3000);
 }
 
-// Initialise le bouton d'export
 function initializeExportButton() {
   const exportButton = document.getElementById('export-btn');
   if (!exportButton) return;
@@ -761,28 +880,18 @@ function initializeExportButton() {
     enableButton(exportButton);
   } else {
     disableButton(exportButton);
-  console.log("jojo");
     exportButton.addEventListener('click', () => handleCaptivePortalClick(exportButton), {});
   }
-}
+};
 
-// Met à jour l'état du bouton de sauvegarde de session
-function setStateButton() {
-  const runButton = document.getElementById('run-btn');
-  const saveButton = document.getElementById('save-btn');
-  const exportButton = document.getElementById('export-btn');
-  const clearZoneButton = document.getElementById('clear-btn');
-  if (countTotalBlocks(program) > 0) {
-    enableButton(runButton);
-    enableButton(saveButton);
-    enableButton(exportButton);
-    enableButton(clearZoneButton);
+function setState-SaveSession-button(){
+const saveButton = document.getElementById('save-btn');
+if (countTotalBlocks(program)>0)
+enableButton(saveButton);
   } else {
-    disableButton(runButton);
     disableButton(saveButton);
-    disableButton(exportButton);
-    disableButton(clearZoneButton);
-  }
-}
+  };
+};
+
 )rawliteral";
 #endif

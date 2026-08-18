@@ -4,7 +4,6 @@
 const char OTA_JS[] PROGMEM = R"rawliteral(
 document.addEventListener('DOMContentLoaded', function() {
   const hostname = window.location.hostname;
-  const pathname = window.location.pathname;
 
   const theParam = "BASE_URL";
   if (!sessionStorage.getItem('BASE_URL')){

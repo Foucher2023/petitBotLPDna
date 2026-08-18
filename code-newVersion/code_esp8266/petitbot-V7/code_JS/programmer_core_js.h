@@ -11,10 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
         let url_host = data + ".local";
         sessionStorage.setItem('BASE_URL', url_host);
       })
-      .then(() => { initializeExportButton();})
+      .then(() => { initializeExportButton(); })
       .catch(error => console.error("Erreur :", error));
   }
-      updateUI();
 });
 
 window.onload = function() {
@@ -87,7 +86,7 @@ function updateBlockCounters() {
 function updateUI() {
   updateMoveButtons();
   updateBlockCounters();
-  setStateButton();
+  setStateSaveSessionButton();
 }
 
 // Supprime les références circulaires pour la sérialisation JSON
@@ -699,7 +698,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-
+  // Charger le programme depuis sessionStorage au démarrage
+  loadProgram();
 });
 
 // ====================== FONCTIONS UTILITAIRES POUR L'URL ======================
@@ -714,30 +714,16 @@ function enableButton(button) {
   button.style.opacity = '1';
   button.style.cursor = 'pointer';
   button.style.backgroundColor = '';
-  if (button.id === 'export-Btn') {
-    button.textContent = 'Exporter le programme';
-  }else if (button.id === 'save-Btn'){
-    button.textContent = 'sauvgarder dans le navigateur ';
-  }else if (button.id === 'run-Btn'){
-    button.textContent = 'Exécuter';
-  }else if (button.id === 'clear-btn'){
-    button.textContent = 'Effacer la zone de programme';
-  }
+  button.textContent = 'Exporter le programme';
 }
 
 // Désactive un bouton
 function disableButton(button) {
+  if (button === exportButton) {
     button.style.opacity = '0.5';
     button.style.cursor = 'not-allowed';
     button.style.backgroundColor = '';
-  if (button.id === 'export-Btn') {
-    button.textContent = 'pas d\'Export';
-  }else if (button.id === 'save-Btn'){
-    button.textContent = 'pas de sauvgarde';
-  }else if (button.id === 'run-Btn'){
-      button.textContent = 'pas d\'execution';
-  }else if (button.id === 'clear-btn'){
-    button.textContent = 'zone vide';
+    button.textContent = 'Exporter le programme';
   }
 }
 
@@ -761,27 +747,17 @@ function initializeExportButton() {
     enableButton(exportButton);
   } else {
     disableButton(exportButton);
-  console.log("jojo");
     exportButton.addEventListener('click', () => handleCaptivePortalClick(exportButton), {});
   }
 }
 
 // Met à jour l'état du bouton de sauvegarde de session
-function setStateButton() {
-  const runButton = document.getElementById('run-btn');
+function setStateSaveSessionButton() {
   const saveButton = document.getElementById('save-btn');
-  const exportButton = document.getElementById('export-btn');
-  const clearZoneButton = document.getElementById('clear-btn');
   if (countTotalBlocks(program) > 0) {
-    enableButton(runButton);
     enableButton(saveButton);
-    enableButton(exportButton);
-    enableButton(clearZoneButton);
   } else {
-    disableButton(runButton);
     disableButton(saveButton);
-    disableButton(exportButton);
-    disableButton(clearZoneButton);
   }
 }
 )rawliteral";
