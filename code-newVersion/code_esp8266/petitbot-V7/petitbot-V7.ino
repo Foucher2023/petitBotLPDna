@@ -18,9 +18,15 @@ static constexpr uint8_t PIN_MOTOR1 = 4;          // Broche moteur
 static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 // 0 et 3 pour esp32
 
-// todo optimise the css via global.css
+// todo optimise the css via global.css V8 
+// todo optimise programme_JS into mutiple file V8
+// todo check all the other file for optimisation V8
 // todo stop the broadcast ssid -- optional 
-// todo check baseURL in programmer_JS
+// todo correct the drag an drop of programmation js 
+//comment all js file in french
+//comment all ino file in french 
+//comment all html file in french 
+//comment all CSS file in french 
 
 
 // =================== Bibliothèques =========================
