@@ -12,6 +12,8 @@ const char OTA_PAGE[] PROGMEM = R"rawliteral(
   <link rel="stylesheet" href="/ota.css">
 </head>
 <body>
+  <!-- ======== NAVBAR LIMITEE POUR EVITE PROBLEME LORS DE OTA ======== -->
+
   <nav class="navbar navbar-inverse">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -22,11 +24,13 @@ const char OTA_PAGE[] PROGMEM = R"rawliteral(
 
   <div class="ota-container">
     <h1 class="infoInBlack">Mise à jour via OTA</h1>
-    
+    <!-- ======== MESSAGE PRINCIPALE ======== -->
+
     <div style="display: block; class="message-important" id="message-ota-important">Pour bien utiliser cette fonctionnalitée vous devez être connecter sur un navigateur avec l'url "192.168.4.1/ota" </div>
    
     <p class="infoInBlack">Sélectionnez un fichier .bin pour mettre à jour le PetitBot.</p>
-  
+    <!-- ======== ZONE DE DROP_FILE POUR OTA ======== -->
+
     <div id="form-ota-working-block" style="display: block;">
       <div class="ota-form">
         <form id="otaForm">
@@ -39,6 +43,7 @@ const char OTA_PAGE[] PROGMEM = R"rawliteral(
     <div class="ota-progress">
       <div class="ota-progress-bar" id="progressBar"></div>
     </div>
+    <!-- ======== MESSAGE DE STATUS ======== -->
 
     <div class="ota-status" id="statusMessage"></div>
   </div>

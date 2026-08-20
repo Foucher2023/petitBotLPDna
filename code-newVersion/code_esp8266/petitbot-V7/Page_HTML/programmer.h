@@ -14,12 +14,13 @@ const char PROGRAMMER_PAGE[] PROGMEM = R"rawliteral(
 <body>
 <div id="navbar-placeholder"></div>
   <main class="container">
-    <h1>Programmer Petit Bot</h1>
+    <h1>Programmer le Petit-Bot</h1>
+    <!-- ============= Panneau des blocs disponibles ============= -->
 
-    <!-- Panneau des blocs disponibles -->
     <section class="blocks-panel">
       <h2 class="program-title">Blocs disponibles</h2>
       <div class="blocks-grid">
+
         <!-- Bloc Avancer -->
         <div class="block-container">
           <div class="block" draggable="true" data-block-type="FORWARD" id="forward-block">
@@ -86,23 +87,25 @@ const char PROGRAMMER_PAGE[] PROGMEM = R"rawliteral(
         </div>
       </div>
     </section>
+    <!-- ======== Panneau du programme / DROP_ZONE pour les différents blocs ======== -->
 
-    <!-- Panneau du programme -->
+  
     <section class="program-panel">
       <h2 class="program-title">Programme</h2>
       <p class="infoInBlack" id="NumbBlock"></p>
       <div id="program-area" data-action="drop-zone"></div>
 
-      <!-- Contrôles -->
+      <!-- ============= les différents Bouttons de Contrôles du programme ============= -->
+
       <div class="controls">
         <div class="main-buttons">
           <button id="run-btn" data-action="run">Exécuter</button>
           <button id="stop-btn" data-action="stop">Stop</button>
-          <button id="clear-btn" data-action="clear">Effacer la zone de programme</button>
+          <button id="clear-zone-btn" data-action="clear">Effacer la zone de programme</button>
         </div>
         <div class="secondary-buttons">
           <button id="save-btn" data-action="save-session">Sauvegarder dans le navigateur</button>
-          <button id="clear2-btn" data-action="clear-session">Effacer la sauvegarde</button>
+          <button id="clear-save-btn" data-action="clear-session">Effacer la sauvegarde</button>
         </div>
         <div class="tertiary-buttons">
           <button id="export-btn" data-action="export">Exporter le programme</button>

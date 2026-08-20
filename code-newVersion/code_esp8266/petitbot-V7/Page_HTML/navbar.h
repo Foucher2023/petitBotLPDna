@@ -15,9 +15,11 @@ const char NAVBAR_HTML[] PROGMEM = R"rawliteral(
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
+        <!-- ======== LES DIFFERENTES PAGES DISPONIBLE ======== -->
         <li id="button-config"><a href="/config">Configuration</a></li>
         <li id="button-remote"><a href="/telecommande">Télécommande</a></li>
         <li id="button-programmation"><a href="/programmer">Programmer</a></li>
+        <!-- ======== todo page à propos qui explique le projet ======== -->
       </ul>
     </div>
   </div>

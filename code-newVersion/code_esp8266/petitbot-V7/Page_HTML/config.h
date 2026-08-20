@@ -15,7 +15,9 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
   <div id="navbar-placeholder"></div>
   <main>
     <h1>Configuration du PetitBot</h1>
-    <!-- État de la LED -->
+
+    <!-- ======== État de la LED ======== -->
+    
     <section class="config-section">
       <h2>État de la LED</h2>
       <form class="config-form">
@@ -32,7 +34,8 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
       </form>
     </section>
 
-    <!-- Inversion des moteurs avant/arrière -->
+    <!-- ======== Inversion des moteurs avant/arrière ======== -->
+
     <section class="config-section">
       <h2>Moteurs inversés avant/arrière</h2>
       <form class="config-form">
@@ -49,7 +52,8 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
       </form>
     </section>
 
-    <!-- Inversion des moteurs gauche/droite -->
+    <!-- ======== Inversion des moteurs gauche/droite ======== -->
+
     <section class="config-section">
       <h2>Moteurs inversés gauche/droite</h2>
       <form class="config-form">
@@ -66,7 +70,8 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
       </form>
     </section>
 
-    <!-- Broches des moteurs -->
+    <!-- ======== Broches des moteurs ======== -->  
+
     <section class="config-section">
       <h2>Broches des moteurs</h2>
       <p id="statusPinMotorSet"></p>
@@ -103,8 +108,9 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
       <button id="updateButton" class="button" data-action="update-pins">Changer les broches</button>
       <p id="statusGPIO"></p>
     </section>
+    <!-- ======== SSID ======== -->
+    
 
-    <!-- SSID -->
     <section class="config-section">
       <h2>Nouveau nom du réseau (SSID)</h2>
       <div class="ssid-input">
@@ -114,11 +120,14 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
       <p id="statusSSID"></p>
     </section>
 
-    <!-- Réinitialisation -->
+    <!-- ======== Réinitialisation ======== -->
+
     <section class="config-section">
       <h2>Réinitialisation du petit-bot aux paramètres de départ</h2>
       <button class="button" id="reset-btn" data-action="reset">Réinitialiser la configuration</button>
     </section>
+
+     <!-- ======== OTA ======== --> 
 
     <div class="ota-update-button-container" id="otaButtonContainer" style="display: none;">
       <section class="config-section">
