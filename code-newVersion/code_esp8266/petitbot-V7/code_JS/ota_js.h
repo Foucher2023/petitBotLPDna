@@ -2,32 +2,35 @@
 #define OTA_JS_H
 
 const char OTA_JS[] PROGMEM = R"rawliteral(
+
+// Initialise la page et vérifie l'URL pour afficher/masquer les éléments OTA 
 document.addEventListener('DOMContentLoaded', function() {
   const hostname = window.location.hostname;
-
   const theParam = "BASE_URL";
+
   if (!sessionStorage.getItem('BASE_URL')){
   fetch(`/get-static-value?param=${encodeURIComponent(theParam)}`)
   .then(response => response.text())
   .then(data => {
-    let url_host = data + ".local";
-    sessionStorage.setItem('Base_URL', url_host);
+        const url_host = data + ".local";
+        sessionStorage.setItem('BASE_URL', url_host);
     })
     .catch(error => console.error("Erreur :", error));
   };
   
-  // cacher le message important UNIQUEMENT si l'url est 192.168.4.1 ou le base_URL
+  // Masque le message important si l'URL est 192.168.4.1 ou BASE_URL
   if (hostname === "192.168.4.1" || hostname === sessionStorage.getItem('BASE_URL')) {
-  //todo check not working properly 
     document.getElementById('message-ota-important').style.display = 'none';
   }else {
     document.getElementById('form-ota-working-block').style.display = 'none';
   }
 });
 
+// Démarre le processus OTA avec un fichier .bin 
 function startOTA() {
   const fileInput = document.getElementById('fileInput');
   const file = fileInput.files[0];
+
   if (!file) {
     showStatus('Veuillez sélectionner un fichier .bin', 'error');
     return;
@@ -56,7 +59,7 @@ function startOTA() {
       showStatus('Mise à jour réussie! Redémarrage...', 'success');
       setTimeout(() => window.location.reload(), 3000);
     } else {
-      showStatus('Erreur lors de la mise à jour: ' + xhr.responseText, 'error');
+      showStatus('Erreur lors de la mise à jour : ' + xhr.responseText, 'error');
     }
   };
 
@@ -68,6 +71,7 @@ function startOTA() {
   xhr.send(formData);
 };
 
+// Affiche un message de statut avec un type (succès/erreur)
 function showStatus(message, type) {
   const statusElement = document.getElementById('statusMessage');
   statusElement.textContent = message;

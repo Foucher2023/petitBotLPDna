@@ -2,10 +2,10 @@
 #define TELECOMMANDE_JS_H
 
 const char TELECOMMANDE_JS[] PROGMEM = R"rawliteral(
-/* ===== Variables globales ===== */
+// ====================== Variables globales ====================
 let activeKey = null;
 
-/* ===== Initialisation ===== */
+// ====================== Initialisation =====================
 window.onload = function() {
   // Récupère la navbar
   fetch('/navbar')
@@ -30,7 +30,7 @@ window.onload = function() {
     .catch(error => console.error("Erreur lors de la récupération des valeurs EEPROM:", error));
 };
 
-/* ===== Mise à jour du titre ===== */
+// ====================== Mise à jour du titre ==============================
 function setTitleRemote() {
   const ssidState = sessionStorage.getItem('ssidName');
   if (ssidState && ssidState.length > 2) {
@@ -41,7 +41,8 @@ function setTitleRemote() {
   }
 }
 
-/* ===== Contrôle des moteurs ===== */
+// ============================= Contrôle des moteurs ======================
+
 function controlMotor(direction) {
   fetch(`/UseTelecommande?val=${direction}`)
     .catch(error => console.error("Erreur:", error));
@@ -52,7 +53,7 @@ function stopMotor() {
     .catch(error => console.error("Erreur:", error));
 }
 
-/* ===== Gestion des boutons ===== */
+// ======================= Gestion des boutons =============================
 // Délégation d'événements pour les boutons de direction
 document.addEventListener('mousedown', function(e) {
   const button = e.target.closest('[data-action]');
@@ -103,7 +104,7 @@ document.addEventListener('touchend', function(e) {
   }
 });
 
-/* ===== Gestion des touches clavier ===== */
+// ================================ Gestion des touches clavier ==============================
 // Mappage des touches clavier aux actions
 const keyMap = {
   38: { action: 'FORWARD', button: 'forwardBtn' },  // Flèche haut

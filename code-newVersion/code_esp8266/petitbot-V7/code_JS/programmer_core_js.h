@@ -754,6 +754,7 @@ function initializeExportButton() {
 // Met à jour l'état du bouton de sauvegarde de session
 function setStateSaveSessionButton() {
   const saveButton = document.getElementById('save-btn');
+  alert(countTotalBlocks(program));
   if (countTotalBlocks(program) > 0) {
     enableButton(saveButton);
   } else {

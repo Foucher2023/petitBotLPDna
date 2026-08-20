@@ -124,6 +124,12 @@ window.allowDrop = function(ev) {
   ev.preventDefault();
 };
 
+document.addEventListener("drop", (e) => {
+  if (e.target.closest("[data-action='drop-zone']") || e.target.closest(".loop-body")) {
+    drop(e);
+  }
+});
+
 // Gère le début du drag pour les blocs
 window.drag = function(ev) {
   if (!ev.target.classList.contains('block')) return;
@@ -141,9 +147,7 @@ window.drag = function(ev) {
 
 // Gère le drop des blocs
 window.drop = function(ev) {
-  ev.preventDefault();
-  ev.stopPropagation();
-
+  ev.preventDefault(); // Empêche le comportement par défaut (ouvrir le fichier)
   const blockId = ev.dataTransfer.getData("text/plain");
   const blockType = ev.dataTransfer.getData("block-type");
   const time = ev.dataTransfer.getData("time");
@@ -158,7 +162,6 @@ window.drop = function(ev) {
       return;
     }
   }
-
   addBlockToProgram(blockId, blockType, time, -1, iterations);
 };
 
@@ -369,6 +372,7 @@ window.clearProgram = function() {
 window.clearSessionStorage = function() {
   if (sessionStorage.getItem("petitbotProgram")) {
     sessionStorage.removeItem("petitbotProgram");
+    setStateButton();
     alert("✅ Programme supprimé de la mémoire du navigateur");
   }
 };
@@ -382,7 +386,7 @@ window.runProgram = function() {
 
   document.getElementById("run-btn").disabled = true;
   document.getElementById("stop-btn").disabled = false;
-  document.getElementById("clear-btn").disabled = true;
+  document.getElementById("clear-zone-btn").disabled = true;
   document.getElementById("save-btn").disabled = true;
   document.getElementById("load-btn").disabled = true;
   document.getElementById("export-btn").disabled = true;
@@ -401,7 +405,7 @@ window.stopProgram = function() {
 
   document.getElementById("run-btn").disabled = false;
   document.getElementById("stop-btn").disabled = true;
-  document.getElementById("clear-btn").disabled = false;
+  document.getElementById("clear-zone-btn").disabled = false;
   document.getElementById("save-btn").disabled = false;
   document.getElementById("load-btn").disabled = false;
   document.getElementById("export-btn").disabled = false;
@@ -558,9 +562,7 @@ window.renderProgram = function() {
       blockElement.innerHTML = `
         <strong>${blockNames.LOOP}</strong>
         <span>
-          <input type="number" value="${step.iterations || 3}" min="1"
-                 class="inputBox inProgInput" onchange="updateLoopIterations(this)">
-          fois
+          <input type="number" value="${step.iterations || 3}" min="1" class="inputBox inProgInput" onchange="updateLoopIterations(this)">fois
         </span>
         <div class="loop-block-content">
           <div class="loop-quick-add">
@@ -694,10 +696,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Gestion des zones de drop
   document.addEventListener("dragover", (e) => {
-    if (e.target.closest("[data-action='drop-zone']") || e.target.closest(".loop-body")) {
-      allowDrop(e);
-    }
-  });
+  if (e.target.closest("[data-action='drop-zone']") || e.target.closest(".loop-body")) {
+    e.preventDefault(); // Obligatoire pour autoriser le drop
+  }
+});
 
 
 });
@@ -708,19 +710,20 @@ function isValidUrl() {
   const hostname = window.location.hostname;
   return hostname === "192.168.4.1" || hostname === sessionStorage.getItem('BASE_URL');
 }
+// ====================== FONCTIONS Utilisabilité des bouttons ======================
 
 // Active un bouton
 function enableButton(button) {
   button.style.opacity = '1';
   button.style.cursor = 'pointer';
   button.style.backgroundColor = '';
-  if (button.id === 'export-Btn') {
+  if (button.id === 'export-btn') {
     button.textContent = 'Exporter le programme';
-  }else if (button.id === 'save-Btn'){
+  }else if (button.id === 'save-btn'){
     button.textContent = 'sauvgarder dans le navigateur ';
-  }else if (button.id === 'run-Btn'){
+  }else if (button.id === 'run-btn'){
     button.textContent = 'Exécuter';
-  }else if (button.id === 'clear-btn'){
+  }else if (button.id === 'clear-zone-btn'){
     button.textContent = 'Effacer la zone de programme';
   }
 }
@@ -730,13 +733,13 @@ function disableButton(button) {
     button.style.opacity = '0.5';
     button.style.cursor = 'not-allowed';
     button.style.backgroundColor = '';
-  if (button.id === 'export-Btn') {
+  if (button.id === 'export-btn') {
     button.textContent = 'pas d\'Export';
-  }else if (button.id === 'save-Btn'){
+  }else if (button.id === 'save-btn'){
     button.textContent = 'pas de sauvgarde';
-  }else if (button.id === 'run-Btn'){
+  }else if (button.id === 'run-btn'){
       button.textContent = 'pas d\'execution';
-  }else if (button.id === 'clear-btn'){
+  }else if (button.id === 'clear-zone-btn'){
     button.textContent = 'zone vide';
   }
 }
@@ -749,6 +752,7 @@ function handleCaptivePortalClick(button) {
 
   setTimeout(() => {
     disableButton(button);
+    console.log(button);
   }, 3000);
 }
 
@@ -761,7 +765,6 @@ function initializeExportButton() {
     enableButton(exportButton);
   } else {
     disableButton(exportButton);
-  console.log("jojo");
     exportButton.addEventListener('click', () => handleCaptivePortalClick(exportButton), {});
   }
 }
@@ -771,7 +774,8 @@ function setStateButton() {
   const runButton = document.getElementById('run-btn');
   const saveButton = document.getElementById('save-btn');
   const exportButton = document.getElementById('export-btn');
-  const clearZoneButton = document.getElementById('clear-btn');
+  const clearZoneButton = document.getElementById('clear-zone-btn');
+  const clearSaveButton = document.getElementById('clear-save-btn');
   if (countTotalBlocks(program) > 0) {
     enableButton(runButton);
     enableButton(saveButton);
@@ -783,6 +787,10 @@ function setStateButton() {
     disableButton(exportButton);
     disableButton(clearZoneButton);
   }
-}
+  if (!sessionStorage.getItem('petitbotProgram')){
+      disableButton(clearSaveButton);
+}else {enableButton(clearSaveButton);}
+};
+
 )rawliteral";
 #endif

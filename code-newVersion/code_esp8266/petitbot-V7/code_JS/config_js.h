@@ -2,7 +2,8 @@
 #define CONFIG_JS_H
 
 const char CONFIG_JS[] PROGMEM = R"rawliteral(
-/* ===== Variables globales ===== */
+
+// Mappage des broches Dx vers GPIO et inversement 
 const pinMap = {
   "": "",
   "D0": 16,
@@ -28,9 +29,11 @@ const gpioToNameMap = {
   "15": "D8"
 };
 
-/* ===== Initialisation ===== */
+// ============================ FONCTIONS AU CHARGEMENT DE LA PAGE ==========================
+
+// Initialisation au chargement de la page 
 document.addEventListener('DOMContentLoaded', function() {
-  // get navbar
+  // Charge la navbar
  fetch('/navbar')
     .then(response => response.text())
     .then(html => {
@@ -42,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .catch(error => console.error("Erreur lors du chargement de la navbar :", error));
     
-  // Récupère l'état depuis l'ESP
+  // Récupère les valeurs depuis l'ESP
   fetch('/get-values-EEPROM')
     .then(response => response.text())
     .then(data => {
@@ -87,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // --- Gestion de l'affichage du bouton OTA ---
+  // Gestion de l'affichage du bouton OTA
   const hostname = window.location.hostname;
   const theParam = "BASE_URL";
 
@@ -115,10 +118,8 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-/* ===== Mise à jour de l'interface ===== */
-/**
- * Met à jour l'affichage du SSID et des broches
- */
+// ============================== MISE A JOUR DE L AFFICHAGE ======================
+// Met à jour l'affichage du SSID et des broches 
 function updateStatusDisplay() {
   // Afficher le SSID
   const ssidState = sessionStorage.getItem('ssidName');
@@ -139,9 +140,7 @@ function updateStatusDisplay() {
   }
 }
 
-/**
- * Restaure l'état de l'UI depuis sessionStorage
- */
+// Restaure l'état de l'UI depuis sessionStorage 
 function restoreUIState() {
   // Restaurer l'état de la LED
   const ledState = sessionStorage.getItem('ledState');
@@ -168,10 +167,7 @@ function restoreUIState() {
   }
 }
 
-/**
- * Met à jour l'état visuel du bouton (ajout/suppression de button-checked)
- * @param {HTMLElement} label - Le label du bouton radio
- */
+// Met à jour l'état visuel du bouton radio 
 function updateCheckedState(label) {
   if (!label) return;
   // Supprime button-checked de tous les labels du même fieldset
@@ -183,12 +179,9 @@ function updateCheckedState(label) {
   label.classList.add('button-checked');
 }
 
-/* ===== Gestion des actions ===== */
-/**
- * Gère les actions en fonction de data-action
- * @param {string} action - L'action à effectuer
- * @param {string} value - La valeur associée (optionnelle)
- */
+// ====================== FONCTIONS GESTION PARAMETRE ESP ======================
+
+// Gère les actions en fonction de data-action 
 function handleAction(action, value) {
   switch (action) {
     case 'led':
@@ -215,12 +208,7 @@ function handleAction(action, value) {
   }
 }
 
-/* ===== Contrôle des paramètres ===== */
-/**
- * Met à jour un paramètre sur l'ESP
- * @param {string} param - Le paramètre à mettre à jour
- * @param {string|number} value - La valeur à appliquer
- */
+// Met à jour un paramètre sur l'ESP 
 function updateState(param, value) {
   const query = `/update-state?param=${encodeURIComponent(param)}&value=${encodeURIComponent(value)}`;
   fetch(query)
@@ -231,10 +219,7 @@ function updateState(param, value) {
     .catch(error => console.error("Erreur :", error));
 }
 
-/**
- * Contrôle la LED
- * @param {string} state - ON ou OFF
- */
+// Contrôle la LED 
 function controlLed(state) {
   const boolState = state === 'ON' ? '0' : '1';
   updateState('ledState', boolState);
@@ -242,10 +227,7 @@ function controlLed(state) {
   updateCheckedState(document.querySelector(`label[data-action="led"][data-value="${state}"]`));
 }
 
-/**
- * Inverse les moteurs avant/arrière
- * @param {string} state - YES ou NO
- */
+// Inverse les moteurs avant/arrière 
 function motorInvertedFrontBack(state) {
   const boolState = state === 'YES' ? '1' : '0';
   updateState('motorBF', boolState);
@@ -253,10 +235,7 @@ function motorInvertedFrontBack(state) {
   updateCheckedState(document.querySelector(`label[data-action="motorBF"][data-value="${state}"]`));
 }
 
-/**
- * Inverse les moteurs gauche/droite
- * @param {string} state - YES ou NO
- */
+// Inverse les moteurs gauche/droite 
 function motorInvertedLeftRight(state) {
   const boolState = state === 'YES' ? '1' : '0';
   updateState('motorLR', boolState);
@@ -264,10 +243,58 @@ function motorInvertedLeftRight(state) {
   updateCheckedState(document.querySelector(`label[data-action="motorLR"][data-value="${state}"]`));
 }
 
-/* ===== Gestion des broches ===== */
-/**
- * Vérifie si le bouton de mise à jour des broches doit être désactivé
- */
+// Met à jour le SSID 
+function updateSSID() {
+  const newSSID = document.getElementById("ssidInput")?.value.trim();
+  const statusElement = document.getElementById("statusSSID");
+  if (!statusElement) return;
+
+  if (!newSSID) {
+    statusElement.textContent = "Veuillez saisir un SSID !";
+    statusElement.style.color = "red";
+    return;
+  }
+
+  sessionStorage.setItem('ssidName', newSSID);
+  fetch(`/update-config?ssid=${encodeURIComponent(newSSID)}`)
+    .then(response => {
+      if (response.ok) {
+        statusElement.textContent = "SSID mis à jour ! Redémarrage du Wi-Fi...";
+        statusElement.style.color = "green";
+        sessionStorage.setItem('ssidName', newSSID);
+        setTimeout(() => window.location.reload(), 2500);
+      } else {
+        throw new Error("Échec de la mise à jour du SSID.");
+      }
+    })
+    .catch(error => {
+      statusElement.textContent = `Erreur : ${error.message}`;
+      statusElement.style.color = "red";
+    });
+}
+
+// Réinitialise la configuration 
+function resetConfig() {
+  if (confirm("Êtes-vous sûr de vouloir réinitialiser la configuration ?")) {
+    fetch('/update-config?reset=all')
+      .then(response => {
+        if (response.ok) {
+          sessionStorage.clear();
+          alert("Configuration réinitialisée. Redémarrage...");
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          throw new Error("Échec de la réinitialisation.");
+        }
+      })
+      .catch(error => {
+        console.error("Erreur :", error);
+        alert(`Erreur : ${error.message}`);
+      });
+  }
+}
+
+// =========================== FUNCTION COMPLEMENTAIRE =========================
+// Vérifie si le bouton de mise à jour des broches doit être désactivé 
 function checkButtonState() {
   const pinMotor1 = document.getElementById("pinMotor1")?.value;
   const pinMotor2 = document.getElementById("pinMotor2")?.value;
@@ -277,32 +304,21 @@ function checkButtonState() {
   }
 }
 
-/**
- * Convertit un nom de broche (ex: "D1") en numéro de GPIO
- * @param {string} pinName - Le nom de la broche (ex: "D1")
- * @returns {number} - Le numéro de GPIO ou -1 si invalide
- */
+// Convertit un nom de broche en numéro de GPIO 
 function convertPinNameToGPIO(pinName) {
   return pinMap[pinName] !== undefined ? pinMap[pinName] : -1;
 }
 
-/**
- * Convertit un numéro de GPIO en nom de broche (ex: 5 -> "D1")
- * @param {string} gpio - Le numéro de GPIO
- * @returns {string} - Le nom de la broche ou le GPIO si non mappé
- */
+// Convertit un numéro de GPIO en nom de broche 
 function convertGPIOToName(gpio) {
   return gpioToNameMap[gpio] ? `${gpioToNameMap[gpio]}` : `GPIO${gpio}`;
 }
 
-/**
- * Met à jour les broches des moteurs
- */
+// Met à jour les broches des moteurs 
 function updatePinMotor() {
   const pinName1 = document.getElementById("pinMotor1")?.value;
   const pinName2 = document.getElementById("pinMotor2")?.value;
   const statusElement = document.getElementById("statusGPIO");
-
   if (!statusElement) return;
 
   // Vérifie que les broches ne sont pas identiques
@@ -342,60 +358,5 @@ function updatePinMotor() {
     });
 }
 
-/* ===== Gestion du SSID ===== */
-/**
- * Met à jour le SSID
- */
-function updateSSID() {
-  const newSSID = document.getElementById("ssidInput")?.value.trim();
-  const statusElement = document.getElementById("statusSSID");
-
-  if (!statusElement) return;
-
-  if (!newSSID) {
-    statusElement.textContent = "Veuillez saisir un SSID !";
-    statusElement.style.color = "red";
-    return;
-  }
-  sessionStorage.setItem('ssidName', newSSID);
-  fetch(`/update-config?ssid=${encodeURIComponent(newSSID)}`)
-    .then(response => {
-      if (response.ok) {
-        statusElement.textContent = "SSID mis à jour ! Redémarrage du Wi-Fi...";
-        statusElement.style.color = "green";
-        sessionStorage.setItem('ssidName', newSSID);
-        setTimeout(() => window.location.reload(), 2500);
-      } else {
-        throw new Error("Échec de la mise à jour du SSID.");
-      }
-    })
-    .catch(error => {
-      statusElement.textContent = `Erreur : ${error.message}`;
-      statusElement.style.color = "red";
-    });
-};
-
-/* ===== Réinitialisation ===== */
-/**
- * Réinitialise la configuration
- */
-function resetConfig() {
-  if (confirm("Êtes-vous sûr de vouloir réinitialiser la configuration ?")) {
-    fetch('/update-config?reset=all')
-      .then(response => {
-        if (response.ok) {
-          sessionStorage.clear();
-          alert("Configuration réinitialisée. Redémarrage...");
-          setTimeout(() => window.location.reload(), 1000);
-        } else {
-          throw new Error("Échec de la réinitialisation.");
-        }
-      })
-      .catch(error => {
-        console.error("Erreur :", error);
-        alert(`Erreur : ${error.message}`);
-      });
-  }
-};
 )rawliteral";
 #endif

@@ -2,10 +2,23 @@
 #define CONNECTION_LIMIT_JS_H
 
 const char CONNECT_LIMIT_JS[] PROGMEM = R"rawliteral(
-/* ===== Variables globales ===== */
+// Variable globale pour l'intervalle de vérification des connexions 
 let checkConnectionInterval = null;
 
-/* ===== Gestion du redémarrage Wi-Fi ===== */
+// Initialise les écouteurs d'événements au chargement de la page 
+document.addEventListener('DOMContentLoaded', () => {
+  startConnectionCheck();
+
+  document.addEventListener('click', (e) => {
+    const actionElement = e.target.closest('[data-action="restart-wifi"]');
+    if (actionElement) {
+      e.preventDefault();
+      restartWiFi();
+    }
+  });
+});
+
+// Redémarre le Wi-Fi et met à jour l'interface 
 function restartWiFi() {
   const button = document.querySelector('.restart-button');
   if (!button) return;
@@ -35,7 +48,7 @@ function restartWiFi() {
     });
 }
 
-/* ===== Vérification périodique du nombre de connexions ===== */
+// Démarre la vérification périodique du nombre de connexions 
 function startConnectionCheck() {
   // Arrête l'intervalle existant (si présent)
   if (checkConnectionInterval) {
@@ -46,6 +59,7 @@ function startConnectionCheck() {
   checkConnectionInterval = setInterval(checkConnections, 1500);
 }
 
+// Vérifie le nombre de connexions actives 
 function checkConnections() {
   fetch('/getNumConnections')
     .then(response => {
@@ -66,10 +80,10 @@ function checkConnections() {
     });
 }
 
+// Met à jour l'interface en fonction du nombre de connexions
 function updateUIBasedOnConnections(numConnections) {
   const restartButton = document.getElementById("restart-button");
   const returnButtonContainer = document.getElementById("return-button-container");
-
   if (!restartButton || !returnButtonContainer) return;
 
   if (numConnections < 2) {
@@ -92,23 +106,8 @@ function updateUIBasedOnConnections(numConnections) {
     restartButton.style.display = 'block';
     restartButton.disabled = false;
     returnButtonContainer.style.display = 'none';
-    returnButtonContainer.innerHTML =``;
+    returnButtonContainer.innerHTML = '';
   }
 }
-
-/* ===== Initialisation ===== */
-document.addEventListener('DOMContentLoaded', () => {
-  // Démarre la vérification des connexions
-  startConnectionCheck();
-
-  // Gestion du bouton de redémarrage
-  document.addEventListener('click', (e) => {
-    const actionElement = e.target.closest('[data-action="restart-wifi"]');
-    if (actionElement) {
-      e.preventDefault();
-      restartWiFi();
-    }
-  });
-});
 )rawliteral";
 #endif
