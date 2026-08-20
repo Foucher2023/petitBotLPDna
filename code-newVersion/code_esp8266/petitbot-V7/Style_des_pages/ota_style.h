@@ -2,6 +2,7 @@
 #define OTA_STYLE_H
 
 const char OTA_CSS[] PROGMEM = R"rawliteral(
+/* Conteneur principal pour la page OTA */
 .ota-container {
   max-width: 600px;
   margin: 20px auto;
@@ -11,6 +12,7 @@ const char OTA_CSS[] PROGMEM = R"rawliteral(
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Style du formulaire OTA */
 .ota-form {
   display: flex;
   flex-direction: column; /* Force l'affichage vertical */
@@ -18,18 +20,17 @@ const char OTA_CSS[] PROGMEM = R"rawliteral(
   align-items: center; /* Aligne les éléments à gauche */
 }
 
+/* Style des champs d'entrée */
 .ota-input {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding: 10px 0;
   border: 1px solid #838383;
   border-radius: 5px;
-  color : black;
+  color: black;
   display: flex;
-  width:100%;
+  width: 100%;
 }
 
-
-
+/* ========== Style des boutons ============*/
 .ota-button {
   background: #4CAF50;
   color: white;
@@ -39,13 +40,14 @@ const char OTA_CSS[] PROGMEM = R"rawliteral(
   cursor: pointer;
   font-size: 16px;
   margin-top: 1vh;
-  align-self: flex-start; /* Aligne le bouton à gauche (optionnel) */
+  align-self: flex-start;
 }
 
 .ota-button:hover {
   background: #45a049;
 }
 
+/* ============== Barre de progression ==================*/
 .ota-progress {
   margin-top: 20px;
   height: 20px;
@@ -61,6 +63,7 @@ const char OTA_CSS[] PROGMEM = R"rawliteral(
   transition: width 0.3s;
 }
 
+/* Messages de statut */
 .ota-status {
   margin-top: 10px;
   padding: 10px;
@@ -78,6 +81,7 @@ const char OTA_CSS[] PROGMEM = R"rawliteral(
   color: #a94442;
 }
 
+/* Message important */
 .message-important {
   background: #ffcccc;
   color: #cc0000;
