@@ -22,10 +22,7 @@ static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 // todo optimise programme_JS into mutiple file V8
 // todo check all the other file for optimisation V8
 // todo stop the broadcast ssid -- optional 
-// todo correct the drag an drop of programmation js 
-//comment all js file in french
-//comment all ino file in french 
-//comment all html file in french 
+// todo page à propos qui explique le projet
 //comment all CSS file in french 
 
 
@@ -329,9 +326,9 @@ void handleRestartWiFi() {
   server.send(200, "text/plain", "WiFi restarted");
 }
 
-void setupRoutes() {
 // ==================== Routage des fonctions qui réponde a un appel externe ==================
 
+void setupRoutes() {
   server.on("/get-values-EEPROM", handleGetValueEEPROM);
   server.on("/get-static-value",handleGetStaticValue);
   server.on("/update-state", handleUpdateState);
@@ -341,7 +338,7 @@ void setupRoutes() {
   server.on("/getNumConnections", handleGetNumConnections);
   server.on("/restart-wifi", handleRestartWiFi);
 
-  // =================== Routage des pages =======================
+// =================== Routage des pages =======================
     // Pages HTML
   server.on("/navbar", []() {
     server.send_P(200, "text/html", NAVBAR_HTML);
@@ -404,6 +401,8 @@ void setupRoutes() {
   server.on("/telecommande.js", []()    { server.send_P(200, "text/javascript", TELECOMMANDE_JS); });
   server.on("/config.js", []()          { server.send_P(200, "text/javascript", CONFIG_JS); });
   server.on("/programmer.js", []()      { server.send_P(200, "text/javascript", PROGRAMMER_JS); });
+  //todo programmer_core and ui 
+
   server.on("/connectionLimit.js", []() { server.send_P(200, "text/javascript", CONNECT_LIMIT_JS); });
   server.on("/ota.js", []()             { server.send_P(200, "text/javascript", OTA_JS); });
 
@@ -428,7 +427,7 @@ void setupConfig() {
   digitalWrite(LED_PIN, config.ledState);
 }
 
-// =================== Initialisation =======================
+// =============================== INITIALISATION ======================================
 void setup() {
   setupSerial();
   setupConfig();
@@ -446,7 +445,7 @@ void setup() {
   Serial.print("Motor Pins: "); Serial.print(config.pinMotor1); Serial.print(", "); Serial.println(config.pinMotor2);
 }
 
-// =================== Boucle principale =====================
+// ================================= Boucle principale =====================================
 void loop() {
   dnsServer.processNextRequest();
   server.handleClient();
