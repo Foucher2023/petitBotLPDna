@@ -25,7 +25,6 @@ static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 // todo page à propos qui explique le projet V8
 
 
-
 // =================== Bibliothèques =========================
 //todo trouvé les include pour esp32 ESP8266HTTPUpdateServer et ESP8266mDNS
 
