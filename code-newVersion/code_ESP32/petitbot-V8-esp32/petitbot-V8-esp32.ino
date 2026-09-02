@@ -13,7 +13,7 @@ static constexpr uint8_t SERVER_PORT = 80;       // Port SERVER
 static constexpr const char* BASE_URL = "petitbot";
 static constexpr uint16_t EEPROM_SIZE = 256; // Taille de l'EEPROM
 static constexpr uint8_t BUFFER_SIZE = 64;
-static constexpr const char* DEFAULT_SSID = "Petitbot testV8";
+static constexpr const char* DEFAULT_SSID = "Petitbot_V8_esp32";
 static constexpr uint8_t DEFAULT_VALUE_F_MEM = 255;
 static constexpr uint8_t PIN_MOTOR1 = 0;          // Broche moteur
 static constexpr uint8_t PIN_MOTOR2 = 3;          // Broche moteur
@@ -162,7 +162,7 @@ void setDefaultConfig() {
   strcpy(config.password, "");
   config.ledState = false;
   config.motorsLRInverted = false;
-  config.motorsFBInverted = true;
+  config.motorsFBInverted = false;
   updateMotorPins(PIN_MOTOR1, PIN_MOTOR2); // Broches par défaut: D2 (GPIO4) et D1 (GPIO5)
   Serial.println("Default config set.");
 }
@@ -342,6 +342,7 @@ void setupRoutes() {
   server.on("/update-config", handleUpdateConfig);
   server.on("/getNumConnections", handleGetNumConnections);
   server.on("/restart-wifi", handleRestartWiFi);
+
 
 // =================== Routage des pages =======================
     // Pages HTML

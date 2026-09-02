@@ -7,21 +7,23 @@
 // =================== Constantes =========================
 static constexpr uint8_t LED_PIN = 2;          // Broche de la LED intégrée (NodeMCU)
 // 8 pour esp32
+// 2 pour esp8266
 static constexpr uint8_t DNS_PORT = 53;       // Port DNS
 static constexpr uint8_t SERVER_PORT = 80;       // Port SERVER
 static constexpr const char* BASE_URL = "petitbot";
 static constexpr uint16_t EEPROM_SIZE = 256; // Taille de l'EEPROM
 static constexpr uint8_t BUFFER_SIZE = 64;
-static constexpr const char* DEFAULT_SSID = "Petitbot test";
+static constexpr const char* DEFAULT_SSID = "Petitbot_V8_esp8266";
 static constexpr uint8_t DEFAULT_VALUE_F_MEM = 255;
 static constexpr uint8_t PIN_MOTOR1 = 4;          // Broche moteur
 static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 // 0 et 3 pour esp32
+// 4 et 5 pour esp8266
 
-// todo optimise the css via global.css V8 
-// todo stop the broadcast ssid -- optional 
-// todo page à propos qui explique le projet V8
 
+// todo completer page à propos qui explique le projet V8
+//navbar on ota 
+// need to find the address for the first flash for the  : bootloader , partition and ino 
 
 
 // =================== Bibliothèques =========================
@@ -34,11 +36,11 @@ static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 
 
 
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
-#include <Servo.h>
-#include <ESP8266HTTPUpdateServer.h> //ota 
-#include <ESP8266mDNS.h> // pour ce connecter à base_url 
+#include <ESP8266WiFi.h>                                  // pour ESP8266
+#include <ESP8266WebServer.h>                             // pour ESP8266
+#include <Servo.h>                                        // pour ESP8266
+#include <ESP8266HTTPUpdateServer.h> //ota                // pour ESP8266
+#include <ESP8266mDNS.h> // pour ce connecter à base_url  // pour ESP8266
 
 // pour les deux version de code 
 #include <DNSServer.h>
@@ -68,8 +70,7 @@ static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 // Scripts JavaScript
 #include "Code_JS/config_js.h"
 #include "Code_JS/telecommande_js.h"
-#include "Code_JS/programmer_ui_js.h"
-#include "Code_JS/programmer_core_js.h"
+#include "Code_JS/programmer_js.h"
 #include "Code_JS/connectionLimit_js.h"
 #include "Code_JS/ota_js.h"
 
@@ -85,13 +86,15 @@ struct DeviceConfig {
 };
 
 DeviceConfig config;
-ESP8266WebServer server(SERVER_PORT);
+ESP8266WebServer server(SERVER_PORT); //esp8266
+//WebServer server(SERVER_PORT); //esp32
 DNSServer dnsServer;
 Servo servoG;
 Servo servoD;
 bool isRedirectToLimitConnect = false;
 
-ESP8266HTTPUpdateServer httpUpdater;
+ESP8266HTTPUpdateServer httpUpdater; //esp8266
+//HTTPUpdateServer httpUpdater; //esp32
 
 // =================== Gestion des broches des moteurs ===========
 // Récupère les broches des servos (inversées si nécessaire)
@@ -411,12 +414,7 @@ void setupRoutes() {
   // Fichiers statiques JS
   server.on("/telecommande.js", []()    { server.send_P(200, "text/javascript", TELECOMMANDE_JS); });
   server.on("/config.js", []()          { server.send_P(200, "text/javascript", CONFIG_JS); });
-  //todo programmer_core and ui 
-  server.on("/programmer_ui.js", []()      { server.send_P(200, "text/javascript", PROGRAMMER_UI_JS); });
-  server.on("/programmer_core.js", []()      { server.send_P(200, "text/javascript", PROGRAMMER_CORE_JS); });
-
-
-
+  server.on("/programmer.js", []()      { server.send_P(200, "text/javascript", PROGRAMMER_JS); });
   server.on("/connectionLimit.js", []() { server.send_P(200, "text/javascript", CONNECT_LIMIT_JS); });
   server.on("/ota.js", []()             { server.send_P(200, "text/javascript", OTA_JS); });
 

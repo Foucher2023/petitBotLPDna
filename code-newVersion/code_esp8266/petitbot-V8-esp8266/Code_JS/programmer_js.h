@@ -14,8 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(() => { initializeExportButton();})
       .catch(error => console.error("Erreur :", error));
   }
-  updateUI();
-  startConnectionCheck
+      updateUI();
 });
 
 window.onload = function() {
@@ -30,39 +29,6 @@ window.onload = function() {
     })
     .catch(error => console.error("Erreur lors du chargement de la navbar :", error));
 };
-
-
-// ============================== FONCTION CHECK-CONNEXION ======================
-
-function startConnectionCheck() {
-  // Arrête l'intervalle existant (si présent)
-  if (checkConnectionInterval) {
-    clearInterval(checkConnectionInterval);
-  }
-
-  // Vérifie toutes les 2 secondes
-  checkConnectionInterval = setInterval(checkConnections, 2000);
-}
-
-function checkConnections() {
-  fetch('/getNumConnections')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP : ${response.status}`);
-      }
-      return response.text();
-    })
-    .then(numConnections => {
-
-      const num = parseInt(numConnections, 10);
-      if (!isNaN(num)) {
-        if(num>1){window.location.href = '/connection-limit';}
-      }
-    })
-    .catch(error => {
-      console.error("Erreur lors de la vérification des connexions :", error);
-    });
-}
 
 // ====================== ÉTAT GLOBAL ======================
 // Tableau des blocs du programme, état d'exécution et d'animation

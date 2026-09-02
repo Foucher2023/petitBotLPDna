@@ -49,7 +49,9 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch('/get-values-EEPROM')
     .then(response => response.text())
     .then(data => {
-      const [led, motorBF, motorLR, pinMotor1, pinMotor2, ssid] = data.split(',').map(String);
+
+      //todo suppr nbCo
+      const [led, motorBF, motorLR, pinMotor1, pinMotor2, ssid,nbCo] = data.split(',').map(String);
 
       // Stocke dans sessionStorage
       sessionStorage.setItem('ledState', led);
@@ -58,10 +60,14 @@ document.addEventListener('DOMContentLoaded', function() {
       sessionStorage.setItem('pinMotor1', pinMotor1);
       sessionStorage.setItem('pinMotor2', pinMotor2);
       sessionStorage.setItem('ssidName', ssid);
+      //todo suppr nbCo
+      sessionStorage.setItem('numberOfConnectionST', nbCo);
 
       // Met à jour l'interface
       updateStatusDisplay();
       restoreUIState();
+      //todo suppr alert
+      alert(sessionStorage.getItem('numberOfConnectionST'));
     })
     .catch(error => console.error("Erreur :", error));
 
@@ -116,7 +122,41 @@ document.addEventListener('DOMContentLoaded', function() {
     // Si BASE_URL est déjà dans sessionStorage, on vérifie directement
     checkAndShowOTAButton();
   }
+    startConnectionCheck();
 });
+
+
+// ============================== FONCTION CHECK-CONNEXION ======================
+
+function startConnectionCheck() {
+  // Arrête l'intervalle existant (si présent)
+  if (checkConnectionInterval) {
+    clearInterval(checkConnectionInterval);
+  }
+
+  // Vérifie toutes les 2 secondes
+  checkConnectionInterval = setInterval(checkConnections, 2000);
+}
+
+function checkConnections() {
+  fetch('/getNumConnections')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP : ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(numConnections => {
+
+      const num = parseInt(numConnections, 10);
+      if (!isNaN(num)) {
+        if(num>1){window.location.href = '/connection-limit';}
+      }
+    })
+    .catch(error => {
+      console.error("Erreur lors de la vérification des connexions :", error);
+    });
+}
 
 // ============================== MISE A JOUR DE L AFFICHAGE ======================
 // Met à jour l'affichage du SSID et des broches 
