@@ -2,6 +2,11 @@
 #define OTA_JS_H
 
 const char OTA_JS[] PROGMEM = R"rawliteral(
+// ====================== Variables globales ====================
+
+let checkConnectionInterval = null;
+
+// ======================== Initialisation =======================
 
 // Initialise la page et vérifie l'URL pour afficher/masquer les éléments OTA 
 document.addEventListener('DOMContentLoaded', function() {

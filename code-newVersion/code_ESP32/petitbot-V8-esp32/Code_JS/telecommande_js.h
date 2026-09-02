@@ -4,7 +4,7 @@
 const char TELECOMMANDE_JS[] PROGMEM = R"rawliteral(
 // ====================== Variables globales ====================
 let activeKey = null;
-
+let checkConnectionInterval = null;
 // ====================== Initialisation =====================
 window.onload = function() {
   // Récupère la navbar

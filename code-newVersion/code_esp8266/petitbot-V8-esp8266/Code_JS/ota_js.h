@@ -2,6 +2,11 @@
 #define OTA_JS_H
 
 const char OTA_JS[] PROGMEM = R"rawliteral(
+// ====================== Variables globales ====================
+
+let checkConnectionInterval = null;
+
+// ======================== Initialisation =======================
 
 // Initialise la page et vérifie l'URL pour afficher/masquer les éléments OTA 
 document.addEventListener('DOMContentLoaded', function() {
@@ -24,7 +29,42 @@ document.addEventListener('DOMContentLoaded', function() {
   }else {
     document.getElementById('form-ota-working-block').style.display = 'none';
   }
+  startConnectionCheck();
+
 });
+
+// ============================== FONCTION CHECK-CONNEXION ======================
+
+function startConnectionCheck() {
+  // Arrête l'intervalle existant (si présent)
+  if (checkConnectionInterval) {
+    clearInterval(checkConnectionInterval);
+  }
+
+  // Vérifie toutes les 2 secondes
+  checkConnectionInterval = setInterval(checkConnections, 2000);
+}
+
+function checkConnections() {
+  fetch('/getNumConnections')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP : ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(numConnections => {
+
+      const num = parseInt(numConnections, 10);
+      if (!isNaN(num)) {
+        if(num>1){window.location.href = '/connection-limit';}
+      }
+    })
+    .catch(error => {
+      console.error("Erreur lors de la vérification des connexions :", error);
+    });
+}
+// ===================== FONCTIONS POUR L'OTA =============================
 
 // Démarre le processus OTA avec un fichier .bin 
 function startOTA() {

@@ -2,7 +2,11 @@
 #define CONFIG_JS_H
 
 const char CONFIG_JS[] PROGMEM = R"rawliteral(
+// ====================== Variables globales ====================
 
+let checkConnectionInterval = null;
+
+// ======================== Initialisation =======================
 // Mappage des broches Dx vers GPIO et inversement 
 const pinMap = {
   "": "",
@@ -116,7 +120,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // Si BASE_URL est déjà dans sessionStorage, on vérifie directement
     checkAndShowOTAButton();
   }
+  startConnectionCheck();
+
 });
+// ============================== FONCTION CHECK-CONNEXION ======================
+
+function startConnectionCheck() {
+  // Arrête l'intervalle existant (si présent)
+  if (checkConnectionInterval) {
+    clearInterval(checkConnectionInterval);
+  }
+
+  // Vérifie toutes les 2 secondes
+  checkConnectionInterval = setInterval(checkConnections, 2000);
+}
+
+function checkConnections() {
+  fetch('/getNumConnections')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP : ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(numConnections => {
+
+      const num = parseInt(numConnections, 10);
+      if (!isNaN(num)) {
+        if(num>1){window.location.href = '/connection-limit';}
+      }
+    })
+    .catch(error => {
+      console.error("Erreur lors de la vérification des connexions :", error);
+    });
+}
 
 // ============================== MISE A JOUR DE L AFFICHAGE ======================
 // Met à jour l'affichage du SSID et des broches 

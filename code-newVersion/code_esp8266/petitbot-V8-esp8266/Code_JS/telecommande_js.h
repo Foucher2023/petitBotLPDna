@@ -4,7 +4,7 @@
 const char TELECOMMANDE_JS[] PROGMEM = R"rawliteral(
 // ====================== Variables globales ====================
 let activeKey = null;
-
+let checkConnectionInterval = null;
 // ====================== Initialisation =====================
 window.onload = function() {
   // Récupère la navbar
@@ -28,7 +28,40 @@ window.onload = function() {
       setTitleRemote();
     })
     .catch(error => console.error("Erreur lors de la récupération des valeurs EEPROM:", error));
+
+  startConnectionCheck();
 };
+// ============================== FONCTION CHECK-CONNEXION ======================
+
+function startConnectionCheck() {
+  // Arrête l'intervalle existant (si présent)
+  if (checkConnectionInterval) {
+    clearInterval(checkConnectionInterval);
+  }
+
+  // Vérifie toutes les 2 secondes
+  checkConnectionInterval = setInterval(checkConnections, 2000);
+}
+
+function checkConnections() {
+  fetch('/getNumConnections')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP : ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(numConnections => {
+
+      const num = parseInt(numConnections, 10);
+      if (!isNaN(num)) {
+        if(num>1){window.location.href = '/connection-limit';}
+      }
+    })
+    .catch(error => {
+      console.error("Erreur lors de la vérification des connexions :", error);
+    });
+}
 
 // ====================== Mise à jour du titre ==============================
 function setTitleRemote() {

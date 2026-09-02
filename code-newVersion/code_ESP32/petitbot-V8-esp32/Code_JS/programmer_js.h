@@ -2,6 +2,11 @@
 #define PROGRAMMER_JS_H
 
 const char PROGRAMMER_JS[] PROGMEM = R"rawliteral(
+// ====================== Variables globales ====================
+
+let checkConnectionInterval = null;
+
+// ======================== Initialisation =======================
 document.addEventListener('DOMContentLoaded', function() {
   const theParam = "BASE_URL";
   if (!sessionStorage.getItem('BASE_URL')) {
@@ -15,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .catch(error => console.error("Erreur :", error));
   }
   updateUI();
-  startConnectionCheck
+  startConnectionCheck();
 });
 
 window.onload = function() {

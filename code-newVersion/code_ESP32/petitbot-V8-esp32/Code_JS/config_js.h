@@ -2,6 +2,11 @@
 #define CONFIG_JS_H
 
 const char CONFIG_JS[] PROGMEM = R"rawliteral(
+// ====================== Variables globales ====================
+
+let checkConnectionInterval = null;
+
+// ======================== Initialisation =======================
 
 // Mappage des broches Dx vers GPIO et inversement 
 const pinMap = {
@@ -51,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(data => {
 
       //todo suppr nbCo
-      const [led, motorBF, motorLR, pinMotor1, pinMotor2, ssid,nbCo] = data.split(',').map(String);
+      const [led, motorBF, motorLR, pinMotor1, pinMotor2, ssid] = data.split(',').map(String);
 
       // Stocke dans sessionStorage
       sessionStorage.setItem('ledState', led);
@@ -60,14 +65,10 @@ document.addEventListener('DOMContentLoaded', function() {
       sessionStorage.setItem('pinMotor1', pinMotor1);
       sessionStorage.setItem('pinMotor2', pinMotor2);
       sessionStorage.setItem('ssidName', ssid);
-      //todo suppr nbCo
-      sessionStorage.setItem('numberOfConnectionST', nbCo);
 
       // Met à jour l'interface
       updateStatusDisplay();
       restoreUIState();
-      //todo suppr alert
-      alert(sessionStorage.getItem('numberOfConnectionST'));
     })
     .catch(error => console.error("Erreur :", error));
 
