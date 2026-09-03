@@ -115,9 +115,7 @@ const char PROGRAMMER_PAGE[] PROGMEM = R"rawliteral(
     </section>
   </main>
 
-  <!-- <script src="/programmer.js"></script> --!>
-  <script src="/programmer_core.js"></script>
-  <script src="/programmer_ui.js"></script>
+   <script src="/programmer.js"></script>
 </body>
 </html>
 )rawliteral";
