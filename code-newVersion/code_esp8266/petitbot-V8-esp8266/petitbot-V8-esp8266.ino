@@ -10,7 +10,7 @@ static constexpr uint8_t LED_PIN = 2;          // Broche de la LED intégrée (N
 // 2 pour esp8266
 static constexpr uint8_t DNS_PORT = 53;       // Port DNS
 static constexpr uint8_t SERVER_PORT = 80;       // Port SERVER
-static constexpr const char* BASE_URL = "petitbot";
+static constexpr const char* BASE_URL = "petitbot"; // url pour téléphone [url].local 
 static constexpr uint16_t EEPROM_SIZE = 256; // Taille de l'EEPROM
 static constexpr uint8_t BUFFER_SIZE = 64;
 static constexpr const char* DEFAULT_SSID = "Petitbot_V8_esp8266";
@@ -323,10 +323,11 @@ void handleGetNumConnections(){
 }
 
 void handleRestartWiFi() {
-  server.stop();
   WiFi.softAPdisconnect(true);
   WiFi.disconnect(true); 
-  delay(2000);
+  delay(4000);
+  server.stop();
+  delay(5000);
   setWifi();
   server.begin();
 };

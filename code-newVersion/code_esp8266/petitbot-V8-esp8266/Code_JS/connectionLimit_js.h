@@ -2,6 +2,20 @@
 #define CONNECTION_LIMIT_JS_H
 
 const char CONNECT_LIMIT_JS[] PROGMEM = R"rawliteral(
+
+// ==================== DOM CACHE ====================
+const elements = {
+  ssidText: document.getElementById("ssidText"),
+  spinnerContainer: document.getElementById("spinnerContainer"),
+  contentButton: document.getElementById("contentButton"),
+  warningMessageContainer: document.getElementById("WarningMessageContainer"),
+  okMessageContainer: document.getElementById("OKMessageContainer"),
+  waitingMessageContainer: document.getElementById("WaitingMessageContainer"),
+  restartButtonContainer: document.getElementById("restartButtonContainer"),
+  returnButtonContainer: document.getElementById("returnButtonContainer"),
+  restartButton: document.querySelector('.restart-button')
+};
+
 // Variable globale pour l'intervalle de vérification des connexions 
 let checkConnectionInterval = null;
 let isFetching = false; // Drapeau pour suivre si une requête fetch est en cours
@@ -40,45 +54,41 @@ document.addEventListener('DOMContentLoaded', () => {
 //Définir le ssid dans le text de warning 
 function setTextSsid(){
   const ssid = sessionStorage.getItem('ssidName');
-  const textssid = document.getElementById("ssidText");
-  if (textssid) 
+  if (elements.ssidText) 
   {
-    textssid.style.display = 'block'; // Affiche l'élément
-    textssid.textContent = "nom de reseaux : " + ssid; // Affiche le nom du réseau
+    elements.ssidText.style.display = 'block'; // Affiche l'élément
+    elements.ssidText.textContent = "nom de reseaux : " + ssid; // Affiche le nom du réseau
   }
 };
 
 // Fonction pour afficher le spinner après 1 seconde
   function showSpinnerAfterDelay() {
-    const WarningContainer = document.getElementById("WarningMessagecontainer");
-    const OKContainer = document.getElementById("OKMessageContainer");
-    const WaitingContainer = document.getElementById("WaitingMessageContainer");
 
     spinnerTimeout = setTimeout(() => {
-      document.getElementById("spinnerContainer").style.display = "flex";
-      document.getElementById("content-button").style.display = "none";
-      WarningContainer.style.display = 'none';
-      OKContainer.style.display = 'none';
-      WaitingContainer.style.display = 'block' ;
+      elements.spinnerContainer.style.display = "flex";
+      elements.contentButton.style.display = "none";
+
+      elements.warningMessageContainer.style.display = 'none';
+      elements.okMessageContainer.style.display = 'none';
+      elements.waitingMessageContainer.style.display = 'block' ;
         //changer le texte 
-      WaitingContainer.innerHTML = `
+      elements.waitingMessageContainer.innerHTML = `
         <p>il y a un changement</p> 
     `
-    WaitingContainer.classList.add("waiting-message");
+    elements.waitingMessageContainer.classList.add("waiting-message");
 
     }, 1000); // 1 seconde de délai
   }
 
 function hideSpinner() {
       clearTimeout(spinnerTimeout); // Annule le timeout
-      const WaitingContainer = document.getElementById("WaitingMessageContainer");
-      const WarningContainer = document.getElementById("WarningMessagecontainer");
 
-      document.getElementById("spinnerContainer").style.display = "none";
-      document.getElementById("content-button").style.display = "block";
+      elements.spinnerContainer.style.display = "none";
+      elements.contentButton.style.display = "block";
 
-      WaitingContainer.style.display = 'none' ;
-      WarningContainer.style.display = 'block' ;
+      elements.waitingMessageContainer.style.display = 'none' ;
+      elements.okMessageContainer.style.display = 'none';
+      elements.warningMessageContainer.style.display = 'block' ;
     };
 
 function closeTab() {
@@ -93,12 +103,11 @@ function closeTab() {
 
 // Redémarre le Wi-Fi et met à jour l'interface 
 function restartWiFi() {
-  const button = document.querySelector('.restart-button');
-  if (!button) return; // Si le bouton n'existe pas, on sort
+  if (!elements.restartButton) return; // Si le bouton n'existe pas, on sort
 
   // Désactive le bouton et met à jour son texte
-  button.disabled = true;
-  button.textContent = "Redémarrage en cours...";
+  elements.restartButton.disabled = true;
+  elements.restartButton.textContent = "Redémarrage en cours...";
 
   // Envoie une requête pour redémarrer le Wi-Fi
   fetch('/restart-wifi')
@@ -171,48 +180,43 @@ function checkConnections() {
 // Met à jour l'interface en fonction du nombre de connexions
 function updateUIBasedOnConnections(numConnections) {
 
-  const restartButton = document.getElementById("restartButtonContainer");
-  const returnButtonContainer = document.getElementById("returnButtonContainer");
 
-  const warningContainer = document.getElementById("WarningMessagecontainer");
-  const OKContainer = document.getElementById("OKMessageContainer");
-
-  if (!restartButton || !returnButtonContainer) return; // Si les éléments n'existent pas, on sort
+  if (!elements.restartButtonContainer || !elements.returnButtonContainer) return; // Si les éléments n'existent pas, on sort
 
   if (numConnections < 2) {
     // Si moins de 2 connexions, on cache le bouton de redémarrage et l'avertissement
-    restartButton.disabled = true;
-    restartButton.style.display = 'none';
-    warningContainer.style.display = 'none';
+    elements.restartButtonContainer.disabled = true;
+    elements.restartButtonContainer.style.display = 'none';
+    elements.warningMessageContainer.style.display = 'none';
 
     //changer le texte 
-    OKContainer.innerHTML = `
+    elements.okMessageContainer.innerHTML = `
     <p>Vous êtes maintenant seul(e) sur le reseaux</p> 
     <p>Vous pouvez retourner sur la télécommande avec le boutton en dessous</p>
     <p>et accèder au autre pages </p>
     `
-    OKContainer.style.display = 'block';
-    OKContainer.classList.add("ok-message");
+    elements.okMessageContainer.style.display = 'block';
+    elements.okMessageContainer.classList.add("ok-message");
 
     // Affiche le bouton pour retourner à la télécommande
-    returnButtonContainer.innerHTML = `
+    elements.returnButtonContainer.innerHTML = `
       <button
         class="redirect-button"
         onclick="window.location.href='/telecommande'"
       >Retour à la télécommande
       </button>
     `;
-    returnButtonContainer.style.display = 'block';
+    elements.returnButtonContainer.style.display = 'block';
 
   } else {
     // Si 2 connexions ou plus, on affiche le bouton de redémarrage et l'avertissement
-    restartButton.style.display = 'block';
-    restartButton.disabled = false;
-    returnButtonContainer.style.display = 'none';
-    returnButtonContainer.innerHTML = '';
+    elements.restartButton.style.display = 'block';
+    elements.restartButton.disabled = false;
+    elements.returnButtonContainer.style.display = 'none';
+    elements.returnButtonContainer.innerHTML = '';
 
-    warningContainer.style.display = 'block';
-    OKContainer.style.display = 'none';
+    elements.warningMessageContainer.style.display = 'block';
+    elements.okMessageContainer.style.display = 'none';
   }
 }
 )rawliteral";

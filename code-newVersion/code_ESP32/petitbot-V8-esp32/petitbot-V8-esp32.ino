@@ -323,10 +323,11 @@ void handleGetNumConnections(){
 }
 
 void handleRestartWiFi() {
-  server.stop();
   WiFi.softAPdisconnect(true);
   WiFi.disconnect(true); 
-  delay(2000);
+  delay(4000);
+  server.stop();
+  delay(5000);
   setWifi();
   server.begin();
 };

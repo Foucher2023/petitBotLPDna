@@ -17,7 +17,7 @@ const char CONNECTION_LIMIT_PAGE[] PROGMEM = R"rawliteral(
     <!-- ======== MESSAGE PRINCIPALE ======== -->
     <section class="error-container" role="alert" aria-live="polite">
 
-      <div id="WarningMessagecontainer"class="error-message">
+      <div id="WarningMessageContainer"class="error-message">
         <p>Un appareil est déjà connecté au PetitBot.</p>
         <p id="ssidText" style="display:none;"></p>
         <p>Veuillez déconnecter cet appareil avant de pouvoir utiliser le robot.</p>
@@ -33,7 +33,7 @@ const char CONNECTION_LIMIT_PAGE[] PROGMEM = R"rawliteral(
     <div class="spinner"></div>
   </div>
 
-  <div class="content" id="content-button">
+  <div class="content" id="contentButton">
     <!-- ======== BOUTTON POUR REDEMARRER LA WIFI DU ROBOT ======== -->
 
     <div id="restartButtonContainer">
