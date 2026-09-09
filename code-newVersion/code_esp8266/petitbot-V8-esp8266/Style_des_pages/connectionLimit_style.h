@@ -5,13 +5,15 @@ const char CONNECT_LIMIT_CSS[] PROGMEM = R"rawliteral(
 /* ===== Variables CSS ===== */
 :root {
   --color-error: #ff6b6b;
+  --color-ok: #36c000;
+  --color-waiting: #ed7f01; 
   --color-primary: #4CAF50;
   --color-primary-hover: #45a049;
   --color-text: #333;
   --font-family: Arial, sans-serif;
   --font-size: 16px;
   --padding: 20px;
-  --padding-error: 15px;
+  --padding-text: 15px;
   --border-radius: 5px;
   --max-width: 400px;
   --max-width-button: 200px;
@@ -41,7 +43,29 @@ body {
 /* ===== Message d'erreur ===== */
 .error-message {
   background: var(--color-error);
-  padding: var(--padding-error);
+  padding: var(--padding-text);
+  border-radius: var(--border-radius);
+  margin: var(--padding) auto;
+  max-width: var(--max-width);
+  color: white;
+  text-align: center;
+}
+
+/* ===== Message OK ===== */
+.ok-message {
+  background: var(--color-ok);
+  padding: var(--padding-text);
+  border-radius: var(--border-radius);
+  margin: var(--padding) auto;
+  max-width: var(--max-width);
+  color: white;
+  text-align: center;
+}
+
+/*====== Message Waiting =========*/
+.waiting-message {
+  background: var(--color-waiting);
+  padding: var(--padding-text);
   border-radius: var(--border-radius);
   margin: var(--padding) auto;
   max-width: var(--max-width);
@@ -100,5 +124,39 @@ h1 {
   color: var(--color-text);
   font-size: 1.5em;
 }
+
+/*======= LOADING =======*/
+ /* Style pour le spinner */
+    .spinner-container {
+      display: none; /* Cache le spinner par défaut */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000; /* Assure que le spinner est au-dessus de tout */
+    }
+
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #3498db; /* Couleur du spinner */
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Style pour la page principale */
+    .content {
+      display: block; /* Affiche la page par défaut */
+    }
+
 )rawliteral";
 #endif

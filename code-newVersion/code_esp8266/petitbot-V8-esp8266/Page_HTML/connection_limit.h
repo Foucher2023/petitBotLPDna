@@ -16,22 +16,34 @@ const char CONNECTION_LIMIT_PAGE[] PROGMEM = R"rawliteral(
     
     <!-- ======== MESSAGE PRINCIPALE ======== -->
     <section class="error-container" role="alert" aria-live="polite">
-      <div class="error-message">
+
+      <div id="WarningMessagecontainer"class="error-message">
         <p>Un appareil est déjà connecté au PetitBot.</p>
-        <p>Veuillez déconnecter cet appareil avant de vous connecter.</p>
+        <p id="ssidText" style="display:none;"></p>
+        <p>Veuillez déconnecter cet appareil avant de pouvoir utiliser le robot.</p>
+        <p>Vous pouvais aussi redémarrer entièrement le réseaux pour déconnecter tout le monde d'un seul coup ! </p>
       </div>
+      <!-- ======== Conteneur pour le message OK (affiché dynamiquement) ======== -->
+    <div id="OKMessageContainer" style="display: none;"></div>
+    <div id="WaitingMessageContainer" style="display: none;"></div>
+    
     </section>
 
+    <div class="spinner-container" id="spinnerContainer">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="content" id="content-button">
     <!-- ======== BOUTTON POUR REDEMARRER LA WIFI DU ROBOT ======== -->
 
-    <div id="restart-button">
-    <button class="restart-button" data-action="restart-wifi" aria-label="Redémarrer le réseau Wi-Fi">
-      Redémarrer le réseau
-    </button>
+    <div id="restartButtonContainer">
+      <button class="restart-button" data-action="restart-wifi" aria-label="Redémarrer le réseau Wi-Fi">Redémarrer le réseau</button>
     </div>
         <!-- ======== Conteneur pour le bouton de retour (affiché dynamiquement) ======== -->
+    <div id="returnButtonContainer" style="display: none; text-align: center; margin-top: 20px;"></div>
 
-    <div id="return-button-container" style="display: none; text-align: center; margin-top: 20px;"></div>
+  </div>  
+
   </main>
 
   <script src="/connectionLimit.js"></script>

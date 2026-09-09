@@ -10,7 +10,7 @@ static constexpr uint8_t LED_PIN = 8;          // Broche de la LED intégrée (N
 // 2 pour esp8266
 static constexpr uint8_t DNS_PORT = 53;       // Port DNS
 static constexpr uint8_t SERVER_PORT = 80;       // Port SERVER
-static constexpr const char* BASE_URL = "petitbot";
+static constexpr const char* BASE_URL = "petitbot"; // url pour téléphone [url].local 
 static constexpr uint16_t EEPROM_SIZE = 256; // Taille de l'EEPROM
 static constexpr uint8_t BUFFER_SIZE = 64;
 static constexpr const char* DEFAULT_SSID = "Petitbot_V8_esp32";
@@ -23,7 +23,6 @@ static constexpr uint8_t PIN_MOTOR2 = 3;          // Broche moteur
 
 // todo completer page à propos qui explique le projet V8
 //navbar on ota 
-// need to find the address for the first flash for the  : bootloader , partition and ino 
 
 
 // =================== Bibliothèques =========================
@@ -91,10 +90,10 @@ WebServer server(SERVER_PORT); //esp32
 DNSServer dnsServer;
 Servo servoG;
 Servo servoD;
-bool isRedirectToLimitConnect = false;
 
 //ESP8266HTTPUpdateServer httpUpdater; //esp8266
 HTTPUpdateServer httpUpdater; //esp32
+
 // =================== Gestion des broches des moteurs ===========
 // Récupère les broches des servos (inversées si nécessaire)
 void getServoPins(uint8_t &servoGPin, uint8_t &servoDPin) {
@@ -324,12 +323,13 @@ void handleGetNumConnections(){
 }
 
 void handleRestartWiFi() {
-  WiFi.softAPdisconnect(false);
-  isRedirectToLimitConnect = true;
+  server.stop();
+  WiFi.softAPdisconnect(true);
+  WiFi.disconnect(true); 
   delay(2000);
   setWifi();
-  server.send(200, "text/plain", "WiFi restarted");
-}
+  server.begin();
+};
 
 // ==================== Routage des fonctions qui réponde a un appel externe ==================
 
@@ -343,7 +343,6 @@ void setupRoutes() {
   server.on("/getNumConnections", handleGetNumConnections);
   server.on("/restart-wifi", handleRestartWiFi);
 
-
 // =================== Routage des pages =======================
     // Pages HTML
   server.on("/navbar", []() {
@@ -352,7 +351,7 @@ void setupRoutes() {
 
 
   server.on("/telecommande", []() {
-    if (WiFi.softAPgetStationNum() > 1 || isRedirectToLimitConnect) {
+    if (WiFi.softAPgetStationNum() > 1) {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
     } else {
       server.send_P(200, "text/html", TELECOMMANDE_PAGE);
@@ -360,7 +359,7 @@ void setupRoutes() {
   });
 
   server.on("/config", []() {
-    if (WiFi.softAPgetStationNum() > 1 || isRedirectToLimitConnect) {
+    if (WiFi.softAPgetStationNum() > 1) {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
     } else {
       server.send_P(200, "text/html", CONFIG_PAGE);
@@ -368,7 +367,7 @@ void setupRoutes() {
   });
 
     server.on("/info", []() {
-    if (WiFi.softAPgetStationNum() > 1 || isRedirectToLimitConnect) {
+    if (WiFi.softAPgetStationNum() > 1 ) {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
     } else {
       server.send_P(200, "text/html", INFO_PAGE);
@@ -376,7 +375,7 @@ void setupRoutes() {
   });
 
   server.on("/programmer", []() {
-    if (WiFi.softAPgetStationNum() > 1 || isRedirectToLimitConnect) {
+    if (WiFi.softAPgetStationNum() > 1) {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
     } else {
       server.send_P(200, "text/html", PROGRAMMER_PAGE);
@@ -420,7 +419,7 @@ void setupRoutes() {
 
   // Gestion des requêtes non trouvées
   server.onNotFound([]() {
-    if (WiFi.softAPgetStationNum() > 1 && isRedirectToLimitConnect) {
+    if (WiFi.softAPgetStationNum() > 1) {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
     } else {
       server.send_P(200, "text/html", TELECOMMANDE_PAGE);
@@ -446,7 +445,6 @@ void setup() {
   setWifi();
   setupRoutes();
   server.begin();
-  isRedirectToLimitConnect = false; 
   httpUpdater.setup(&server, "/update", "admin", "admin"); //change the credencials 
 
   Serial.println("Web server started");

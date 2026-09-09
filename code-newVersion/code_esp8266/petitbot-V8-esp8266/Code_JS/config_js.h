@@ -123,6 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
   startConnectionCheck();
 
 });
+
 // ============================== FONCTION CHECK-CONNEXION ======================
 
 function startConnectionCheck() {

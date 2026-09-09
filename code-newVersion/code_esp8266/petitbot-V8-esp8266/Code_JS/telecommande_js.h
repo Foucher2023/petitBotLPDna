@@ -19,7 +19,7 @@ window.onload = function() {
     })
     .catch(error => console.error("Erreur lors du chargement de la navbar :", error));
     
-  // Récupère l'état depuis l'ESP et met à jour le titre
+  // Récupère le ssid depuis l'ESP et met à jour le titre
   fetch('/get-values-EEPROM')
     .then(response => response.text())
     .then(data => {
@@ -31,6 +31,7 @@ window.onload = function() {
 
   startConnectionCheck();
 };
+
 // ============================== FONCTION CHECK-CONNEXION ======================
 
 function startConnectionCheck() {

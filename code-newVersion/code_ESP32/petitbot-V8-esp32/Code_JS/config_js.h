@@ -54,10 +54,8 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch('/get-values-EEPROM')
     .then(response => response.text())
     .then(data => {
-
-      //todo suppr nbCo
       const [led, motorBF, motorLR, pinMotor1, pinMotor2, ssid] = data.split(',').map(String);
-
+      
       // Stocke dans sessionStorage
       sessionStorage.setItem('ledState', led);
       sessionStorage.setItem('motorBF', motorBF);
@@ -124,8 +122,8 @@ document.addEventListener('DOMContentLoaded', function() {
     checkAndShowOTAButton();
   }
     startConnectionCheck();
-});
 
+});
 
 // ============================== FONCTION CHECK-CONNEXION ======================
 

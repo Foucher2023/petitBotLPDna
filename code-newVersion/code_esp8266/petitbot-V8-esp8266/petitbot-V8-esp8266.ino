@@ -23,7 +23,6 @@ static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 
 // todo completer page à propos qui explique le projet V8
 //navbar on ota 
-// need to find the address for the first flash for the  : bootloader , partition and ino 
 
 
 // =================== Bibliothèques =========================
@@ -91,7 +90,6 @@ ESP8266WebServer server(SERVER_PORT); //esp8266
 DNSServer dnsServer;
 Servo servoG;
 Servo servoD;
-bool isRedirectToLimitConnect = false;
 
 ESP8266HTTPUpdateServer httpUpdater; //esp8266
 //HTTPUpdateServer httpUpdater; //esp32
@@ -163,7 +161,7 @@ void setDefaultConfig() {
   strcpy(config.password, "");
   config.ledState = false;
   config.motorsLRInverted = false;
-  config.motorsFBInverted = true;
+  config.motorsFBInverted = false;
   updateMotorPins(PIN_MOTOR1, PIN_MOTOR2); // Broches par défaut: D2 (GPIO4) et D1 (GPIO5)
   Serial.println("Default config set.");
 }
@@ -325,12 +323,13 @@ void handleGetNumConnections(){
 }
 
 void handleRestartWiFi() {
-  WiFi.softAPdisconnect(false);
-  isRedirectToLimitConnect = true;
+  server.stop();
+  WiFi.softAPdisconnect(true);
+  WiFi.disconnect(true); 
   delay(2000);
   setWifi();
-  server.send(200, "text/plain", "WiFi restarted");
-}
+  server.begin();
+};
 
 // ==================== Routage des fonctions qui réponde a un appel externe ==================
 
@@ -352,7 +351,7 @@ void setupRoutes() {
 
 
   server.on("/telecommande", []() {
-    if (WiFi.softAPgetStationNum() > 1 || isRedirectToLimitConnect) {
+    if (WiFi.softAPgetStationNum() > 1) {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
     } else {
       server.send_P(200, "text/html", TELECOMMANDE_PAGE);
@@ -360,7 +359,7 @@ void setupRoutes() {
   });
 
   server.on("/config", []() {
-    if (WiFi.softAPgetStationNum() > 1 || isRedirectToLimitConnect) {
+    if (WiFi.softAPgetStationNum() > 1) {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
     } else {
       server.send_P(200, "text/html", CONFIG_PAGE);
@@ -368,7 +367,7 @@ void setupRoutes() {
   });
 
     server.on("/info", []() {
-    if (WiFi.softAPgetStationNum() > 1 || isRedirectToLimitConnect) {
+    if (WiFi.softAPgetStationNum() > 1 ) {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
     } else {
       server.send_P(200, "text/html", INFO_PAGE);
@@ -376,7 +375,7 @@ void setupRoutes() {
   });
 
   server.on("/programmer", []() {
-    if (WiFi.softAPgetStationNum() > 1 || isRedirectToLimitConnect) {
+    if (WiFi.softAPgetStationNum() > 1) {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
     } else {
       server.send_P(200, "text/html", PROGRAMMER_PAGE);
@@ -420,7 +419,7 @@ void setupRoutes() {
 
   // Gestion des requêtes non trouvées
   server.onNotFound([]() {
-    if (WiFi.softAPgetStationNum() > 1 && isRedirectToLimitConnect) {
+    if (WiFi.softAPgetStationNum() > 1) {
       server.send_P(200, "text/html", CONNECTION_LIMIT_PAGE);
     } else {
       server.send_P(200, "text/html", TELECOMMANDE_PAGE);
@@ -446,7 +445,6 @@ void setup() {
   setWifi();
   setupRoutes();
   server.begin();
-  isRedirectToLimitConnect = false; 
   httpUpdater.setup(&server, "/update", "admin", "admin"); //change the credencials 
 
   Serial.println("Web server started");
