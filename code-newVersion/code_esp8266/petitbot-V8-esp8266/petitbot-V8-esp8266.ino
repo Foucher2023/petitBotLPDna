@@ -22,7 +22,6 @@ static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
 
 
 // todo completer page à propos qui explique le projet V8
-//navbar on ota 
 
 
 // =================== Bibliothèques =========================

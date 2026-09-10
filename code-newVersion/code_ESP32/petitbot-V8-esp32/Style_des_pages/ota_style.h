@@ -2,6 +2,28 @@
 #define OTA_STYLE_H
 
 const char OTA_CSS[] PROGMEM = R"rawliteral(
+
+:root{
+  --font-size-brand: 5vw;
+}
+
+/*navbar*/
+.navbar-brand {
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: var(--font-size-brand);
+  font-weight: bold;
+}
+
+.navbar-inverse {
+    background-color: #222;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-inverse:hover {
+    background-color: #3498db;
+}
+    
 /* Conteneur principal pour la page OTA */
 .ota-container {
   max-width: 600px;
