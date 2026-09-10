@@ -21,6 +21,7 @@ let checkConnectionInterval = null;
 let isFetching = false; // Drapeau pour suivre si une requête fetch est en cours
 let spinnerTimeout;
 const Timming = 500;
+let GlobalNumConnection = 0;
 
 // Initialise les écouteurs d'événements au chargement de la page 
 document.addEventListener('DOMContentLoaded', () => {
@@ -159,11 +160,11 @@ function checkConnections() {
       }
       return response.text(); // Récupère le texte de la réponse
     })
-    .then(numConnections => {
-      const num = parseInt(numConnections, 10); // Convertit la réponse en nombre entier
-      if (!isNaN(num)) {
-        updateUIBasedOnConnections(num); // Met à jour l'interface en fonction du nombre de connexions
-      }
+    .then(valueConnect => {
+      if (GlobalNumConnection != parseInt(valueConnect, 10)){
+        GlobalNumConnection = parseInt(valueConnect, 10);// Convertit la réponse en nombre entier
+        updateUIBasedOnConnections(GlobalNumConnection); // Met à jour l'interface en fonction du nombre de connexions
+      } 
     })
     .catch(error => {
       console.error("Erreur lors de la vérification des connexions :", error); // Affiche l'erreur dans la console
@@ -174,16 +175,18 @@ function checkConnections() {
       // Réinitialise le drapeau à false lorsque la requête est terminée (succès ou erreur)
       isFetching = false;
       hideSpinner();
+      updateUIBasedOnConnections(GlobalNumConnection); // Met à jour l'interface en fonction du nombre de connexions
+
     });
 }
 
 // Met à jour l'interface en fonction du nombre de connexions
-function updateUIBasedOnConnections(numConnections) {
+function updateUIBasedOnConnections(valueConnect) {
 
 
   if (!elements.restartButtonContainer || !elements.returnButtonContainer) return; // Si les éléments n'existent pas, on sort
 
-  if (numConnections < 2) {
+  if (valueConnect < 2) {
     // Si moins de 2 connexions, on cache le bouton de redémarrage et l'avertissement
     elements.restartButtonContainer.disabled = true;
     elements.restartButtonContainer.style.display = 'none';
