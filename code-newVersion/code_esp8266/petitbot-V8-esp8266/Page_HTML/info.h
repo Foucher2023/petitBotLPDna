@@ -19,7 +19,13 @@ const char INFO_PAGE[] PROGMEM = R"rawliteral(
     <!-- ======== MESSAGE PRINCIPALE ======== -->
 
    
-    <p class="infoInBlack">texte a modifier pour parler du projet des petit bot je julien rat et de corentin foucher</p>
+    <p class="infoInBlack">texte a modifier pour parler du projet des petit bot de Julien Rat et Corentin Foucher
+    Ce projet est basé sur celui de Julien Rat des petits débrouillards https://github.com/julienrat/petitbot, 
+    vous pouvez controller le robot en vous connectant par wifi via téléphone ou ordinateur.
+    Vous pouvez le paramètrer, le programmer, et le mettre à jour directement via l'interface en ligne .
+    Vous pouvez suivre le tutoriel pour réaliser cette version : https://www.wikidebrouillard.org/wiki/PetitBot-V5 
+    </p>
+    <!--  -->
 
     <!-- ======== Script JS ======== -->
 

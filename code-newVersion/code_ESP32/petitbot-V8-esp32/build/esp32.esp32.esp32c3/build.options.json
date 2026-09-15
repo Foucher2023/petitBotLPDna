@@ -1,10 +1,10 @@
 {
-  "additionalFiles": "../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..,../../..",
-  "builtInLibrariesFolders": "/home/apdna17/.arduino15/libraries",
+  "additionalFiles": "..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..,..\\..\\..",
+  "builtInLibrariesFolders": "C:\\Users\\coren\\AppData\\Local\\Arduino15\\libraries",
   "compiler.optimization_flags": "-Os",
   "customBuildProperties": "",
   "fqbn": "esp32:esp32:esp32c3:UploadSpeed=921600,CDCOnBoot=default,CPUFreq=160,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,EraseFlash=none,JTAGAdapter=default,ZigbeeMode=default",
-  "hardwareFolders": "/home/apdna17/.arduino15/packages/esp32/hardware/esp32/3.3.11,/home/apdna17/.arduino15/packages/esp32/hardware/esp32/3.3.11",
-  "otherLibrariesFolders": "/home/apdna17/Arduino/libraries",
-  "sketchLocation": "/home/apdna17/Documents/corentin_Foucher_Perso/PetitBot/version-code-corentin/code_ESP32/petitbot-V8-esp32"
+  "hardwareFolders": "C:\\Users\\coren\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\3.3.11,C:\\Users\\coren\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\3.3.11",
+  "otherLibrariesFolders": "c:\\Users\\coren\\Documents\\Arduino\\libraries",
+  "sketchLocation": "C:\\Users\\coren\\Documents\\projet Git\\petitBotLPDna\\code-newVersion\\code_ESP32\\petitbot-V8-esp32"
 }
