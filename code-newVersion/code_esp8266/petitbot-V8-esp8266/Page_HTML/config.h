@@ -15,6 +15,7 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
   <div id="navbar-placeholder"></div>
   <main>
     <h1>Configuration du PetitBot</h1>
+    <p id="statusVERSION"></p>
 
     <!-- ======== État de la LED ======== -->
     
@@ -109,8 +110,6 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
       <p id="statusGPIO"></p>
     </section>
     <!-- ======== SSID ======== -->
-    
-
     <section class="config-section">
       <h2>Nouveau nom du réseau (SSID)</h2>
       <div class="ssid-input">

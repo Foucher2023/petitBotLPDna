@@ -14,6 +14,7 @@ static constexpr const char* BASE_URL = "petitbot"; // url pour téléphone [url
 static constexpr uint16_t EEPROM_SIZE = 256; // Taille de l'EEPROM
 static constexpr uint8_t BUFFER_SIZE = 64;
 static constexpr const char* DEFAULT_SSID = "Petitbot_V8_esp8266";
+static constexpr const char* VALUE_VERSION = "V8.2.3";
 static constexpr uint8_t DEFAULT_VALUE_F_MEM = 255;
 static constexpr uint8_t PIN_MOTOR1 = 4;          // Broche moteur
 static constexpr uint8_t PIN_MOTOR2 = 5;          // Broche moteur
@@ -81,6 +82,7 @@ struct DeviceConfig {
   bool motorsLRInverted = false;
   uint8_t pinMotor1 = PIN_MOTOR1;        // Broche moteur 1 (D2)
   uint8_t pinMotor2 = PIN_MOTOR2;        // Broche moteur 2 (D1)
+  char version[32] = {0};
 };
 
 DeviceConfig config;
@@ -158,6 +160,7 @@ void setDefaultConfig() {
   clearEEPROM();
   strcpy(config.ssid, DEFAULT_SSID);
   strcpy(config.password, "");
+  strcpy(config.version, VALUE_VERSION);
   config.ledState = false;
   config.motorsLRInverted = false;
   config.motorsFBInverted = false;
@@ -191,9 +194,9 @@ void setWifi() {
 // =================== Handlers HTTP =======================
 void handleGetValueEEPROM() {
 char buffer[BUFFER_SIZE];
-snprintf(buffer, sizeof(buffer), "%d,%d,%d,%d,%d,%s",
+snprintf(buffer, sizeof(buffer), "%d,%d,%d,%d,%d,%s,%s",
          config.ledState, config.motorsFBInverted, config.motorsLRInverted,
-         config.pinMotor1, config.pinMotor2, config.ssid);
+         config.pinMotor1, config.pinMotor2, config.ssid,config.version);
 server.send(200, "text/plain", buffer);
 }
 

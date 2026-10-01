@@ -20,8 +20,6 @@ const char NAVBAR_HTML[] PROGMEM = R"rawliteral(
         <li id="button-remote"><a href="/telecommande">Télécommande</a></li>
         <li id="button-programmation"><a href="/programmer">Programmer</a></li>
         <li id="button-info"><a href="/info">A propos</a></li>
-
-        <!-- ======== todo page à propos qui explique le projet ======== -->
       </ul>
     </div>
   </div>

@@ -15,6 +15,7 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
   <div id="navbar-placeholder"></div>
   <main>
     <h1>Configuration du PetitBot</h1>
+    <p id="statusVERSION"></p>
 
     <!-- ======== État de la LED ======== -->
     
@@ -94,7 +95,7 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
         <div class="pin-selector">
           <label for="pinMotor2">Broche Moteur 2 :</label>
           <select id="pinMotor2" data-action="pin-select">
-            <option value="">pas de modification</option>
+            <option value="">Pas de modification</option>
             <option value="A0">0 (GPIO0)</option>
             <option value="A1">1 (GPIO1)</option>
             <option value="A2">2 (GPIO2)</option>
@@ -111,8 +112,6 @@ const char CONFIG_PAGE[] PROGMEM = R"rawliteral(
       <p id="statusGPIO"></p>
     </section>
     <!-- ======== SSID ======== -->
-    
-
     <section class="config-section">
       <h2>Nouveau nom du réseau (SSID)</h2>
       <div class="ssid-input">

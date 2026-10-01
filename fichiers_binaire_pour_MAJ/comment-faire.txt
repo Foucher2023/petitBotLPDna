@@ -14,8 +14,8 @@ pour esp8266 :
 pour esp32-C3 : 
 
 en trois fichier 
-petitbot-V8-esp32.ino.bootloader.bin → Adresse : 0x00000
-petitbot-V8-esp32.ino.partitions.bin → Adresse : 0x8000
-petitbot-V8-esp32.ino.bin → Adresse : 0x10000
+petitbot-V8-esp32.ino.bootloader.bin 	→ Adresse : 0x00000
+petitbot-V8-esp32.ino.partitions.bin 	→ Adresse : 0x08000
+petitbot-V8-esp32.ino.bin 		→ Adresse : 0x10000
 
 clic sur "Program"

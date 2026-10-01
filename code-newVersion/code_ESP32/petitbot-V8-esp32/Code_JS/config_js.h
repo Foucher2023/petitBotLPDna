@@ -7,7 +7,6 @@ const char CONFIG_JS[] PROGMEM = R"rawliteral(
 let checkConnectionInterval = null;
 
 // ======================== Initialisation =======================
-
 // Mappage des broches Dx vers GPIO et inversement 
 const pinMap = {
   "" : "",
@@ -54,8 +53,8 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch('/get-values-EEPROM')
     .then(response => response.text())
     .then(data => {
-      const [led, motorBF, motorLR, pinMotor1, pinMotor2, ssid] = data.split(',').map(String);
-      
+      const [led, motorBF, motorLR, pinMotor1, pinMotor2, ssid, version] = data.split(',').map(String);
+
       // Stocke dans sessionStorage
       sessionStorage.setItem('ledState', led);
       sessionStorage.setItem('motorBF', motorBF);
@@ -63,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
       sessionStorage.setItem('pinMotor1', pinMotor1);
       sessionStorage.setItem('pinMotor2', pinMotor2);
       sessionStorage.setItem('ssidName', ssid);
+      sessionStorage.setItem('versionName', version);
 
       // Met à jour l'interface
       updateStatusDisplay();
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Si BASE_URL est déjà dans sessionStorage, on vérifie directement
     checkAndShowOTAButton();
   }
-    startConnectionCheck();
+  startConnectionCheck();
 
 });
 
@@ -163,9 +163,17 @@ function updateStatusDisplay() {
   // Afficher le SSID
   const ssidState = sessionStorage.getItem('ssidName');
   const statusSSIDElement = document.getElementById("statusSSID");
+
   if (statusSSIDElement && ssidState) {
     statusSSIDElement.textContent = `Connecté au PetitBot : ${ssidState}`;
-  }
+  }  
+  // Afficher version 
+    const versionState = sessionStorage.getItem('versionName');
+  const statusVersionElement = document.getElementById("statusVERSION");
+
+    if (statusVersionElement && versionState) {
+    statusSSIDElement.textContent = `Code PetitBot : ${versionState}`;
+  }  
 
   // Afficher les broches des moteurs
   const pinMotor1State = sessionStorage.getItem('pinMotor1');
